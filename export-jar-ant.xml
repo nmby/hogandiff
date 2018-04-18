@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project hogandiff with Jar-in-Jar Loader">
+    <!--this file was created by Eclipse Runnable JAR file Export Wizard-->
+    <!--ANT 1.7 is required-->
+    <!--define folder properties-->
+    <property name="dir.buildfile" value="."/>
+    <property name="dir.workspace" value="${dir.buildfile}/.."/>
+    <property name="dir.jarfile" value="C:/Users/user01/Desktop"/>
+	<property name="my.version" value="0.1.0"/>
+	<property name="my.date" value="20180419"/>
+    <target name="create_run_jar">
+        <jar destfile="${dir.jarfile}/hogandiff-${my.version}-${my.date}.jar">
+            <manifest>
+                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+                <attribute name="Rsrc-Main-Class" value="xyz.hotchpotch.hogandiff.Main"/>
+                <attribute name="Class-Path" value="."/>
+                <attribute name="Rsrc-Class-Path" value="./ poi-3.17.jar poi-ooxml-3.17.jar poi-ooxml-schemas-3.17.jar commons-codec-1.10.jar commons-collections4-4.1.jar xmlbeans-2.6.0.jar org.eclipse.fx.ide.css.jfx8_3.0.0.201705220750.jar"/>
+            </manifest>
+            <zipfileset src="jar-in-jar-loader.zip"/>
+            <fileset dir="${dir.buildfile}/bin/main"/>
+            <zipfileset dir="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17" includes="poi-3.17.jar"/>
+            <zipfileset dir="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17" includes="poi-ooxml-3.17.jar"/>
+            <zipfileset dir="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17" includes="poi-ooxml-schemas-3.17.jar"/>
+            <zipfileset dir="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17/lib" includes="commons-codec-1.10.jar"/>
+            <zipfileset dir="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17/lib" includes="commons-collections4-4.1.jar"/>
+            <zipfileset dir="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17/ooxml-lib" includes="xmlbeans-2.6.0.jar"/>
+            <zipfileset dir="C:/pleiades4.7/eclipse/plugins" includes="org.eclipse.fx.ide.css.jfx8_3.0.0.201705220750.jar"/>
+        </jar>
+    </target>
+</project>

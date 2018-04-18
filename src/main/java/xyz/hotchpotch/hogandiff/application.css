@@ -1,0 +1,86 @@
+
+.root {
+    -fx-padding: 10.0px;
+    -fx-background-color: white;
+}
+
+#menu-pane {
+    -fx-spacing: 15.0px;
+    -fx-padding: 3.0px 0.0px 5.0px 0.0px;
+}
+
+#selection-parent-pane {
+    -fx-spacing: 3.0px;
+}
+
+.selection-pane {
+    -fx-background-color: rgb(219.0, 244.0, 231.0);
+    -fx-padding: 0.0px 15.0px 0.0px 0.0px
+}
+
+.selection-title-label {
+    -fx-font-size: 18.0px;
+    -fx-text-fill: white;
+    -fx-pref-width: 30.0px;
+    -fx-alignment: center;
+    -fx-background-color: rgb(33.0, 115.0, 70.0);
+}
+
+.selection-item-label {
+    -fx-pref-width: 70.0px;
+    -fx-padding: 0.0px 5.0px 0.0px 0.0px;
+}
+
+#option-parent-pane {
+    -fx-spacing: 3.0px;
+    -fx-background-color: rgb(230.0, 240.0, 255.0);
+}
+
+.option-title-label {
+    -fx-background-color: rgb(196.0, 219.0, 255.0);
+    -fx-padding: 0.0px 5.0px 0.0px 5.0px;
+    -fx-pref-width: 95.0px;
+}
+
+.option-pane {
+    -fx-pref-width: 230.0px;
+    -fx-padding: 3.0px 5.0px 3.0px 5.0px;
+    -fx-spacing: 2.0px;
+}
+
+.option-item-pane {
+    -fx-spacing: 10.0px;
+}
+
+#save-button-pane {
+    -fx-padding: 10.0px 15.0px 10.0px 25.0px;
+    -fx-background-color: rgb(230.0, 240.0, 255.0);
+}
+
+#saveSettings {
+    -fx-pref-width: 100.0px;
+    -fx-pref-height: 30.0px;
+}
+
+#execute-button-pane {
+    -fx-padding: 10.0px 15.0px 10.0px 15.0px;
+    -fx-background-color: rgb(255.0, 200.0, 200.0);
+}
+
+#execute {
+    -fx-font-size: 18.0px;
+}
+
+#result-pane {
+    -fx-background-color: rgb(255.0, 200.0, 200.0);
+    -fx-padding: 10.0px;
+}
+
+#messages {
+}
+
+#workDirPane {
+    -fx-padding: 5.0px 0.0px 0.0px 0.0px;
+    -fx-spacing: 10.0px;
+}
+
