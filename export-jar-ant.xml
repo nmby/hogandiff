@@ -24,9 +24,6 @@
             <zipfileset file="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17/lib/commons-codec-1.10.jar"/>
             <zipfileset file="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17/lib/commons-collections4-4.1.jar"/>
             <zipfileset file="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17/ooxml-lib/xmlbeans-2.6.0.jar"/>
-            <fileset file="${dir.workspace}/LICENSE"/>
-            <fileset file="${dir.workspace}/NOTICE"/>
-            <fileset file="${dir.workspace}/README.md"/>
         </jar>
     </target>
 </project>
