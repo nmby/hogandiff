@@ -377,6 +377,8 @@ public class MenuTask extends Task<Path> {
         
         Path target = dir.resolve(prefix + src.getName());
         try {
+            src.setReadable(true, false);
+            src.setWritable(true, false);
             Files.copy(src.toPath(), target);
             return target;
             

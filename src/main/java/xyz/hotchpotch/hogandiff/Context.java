@@ -45,6 +45,16 @@ public class Context {
         /** 作業用フォルダのパス */
         public static final Props<Path> CURR_WORK_DIR = new Props<>();
         
+        // 実装メモ：
+        // Contextクラスのインスタンスを不変にするために、Tに指定するのは不変クラスだけにする。
+        // java.io.File は不変クラスなのか？ File#setWritable(boolean) とかあるからオブジェクトとして可変なのでは？？
+        // と思わなくもないが、公式api docの中で「Fileクラスのインスタンスは不変です。」と言い切っているので
+        // まぁ不変クラスだと思うようにしておく。
+        // https://docs.oracle.com/javase/jp/8/docs/api/java/io/File.html
+        //
+        // 「つまり、一度作成されると、Fileオブジェクトで表される抽象パス名は変更されません。」
+        // うーん、キーたる抽象パスが不変なら属性値が可変でも不変インスタンスと看做せるでしょ？ということなのかしら。
+        
         /** 比較対象ブック1 */
         public static final Props<File> CURR_FILE1 = new Props<>();
         
