@@ -14,27 +14,11 @@ public class ApplicationException extends Exception {
     
     /**
      * 例外オブジェクトを生成します。<br>
-     */
-    public ApplicationException() {
-        super();
-    }
-    
-    /**
-     * 例外オブジェクトを生成します。<br>
      * 
      * @param msg 例外メッセージ
      */
     public ApplicationException(String msg) {
         super(msg);
-    }
-    
-    /**
-     * 例外オブジェクトを生成します。<br>
-     * 
-     * @param cause 例外の原因
-     */
-    public ApplicationException(Throwable cause) {
-        super(cause);
     }
     
     /**

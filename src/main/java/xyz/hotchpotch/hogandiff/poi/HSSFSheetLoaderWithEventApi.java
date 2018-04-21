@@ -299,7 +299,9 @@ import xyz.hotchpotch.hogandiff.common.CellReplica;
         } catch (NoSuchElementException e) {
             throw e;
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            String msg = String.format("シートの読み込みに失敗しました。book:%s, sheetName:%s",
+                    book.getPath(), sheetName);
+            throw new ApplicationException(msg, e);
         }
     }
 }

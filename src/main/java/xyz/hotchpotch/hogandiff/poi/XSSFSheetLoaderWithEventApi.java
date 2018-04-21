@@ -274,7 +274,9 @@ import xyz.hotchpotch.hogandiff.common.CellReplica;
             throw new NoSuchElementException(
                     String.format("book: %s, relId: %s", book.getPath(), relId));
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            String msg = String.format("シートの読み込みに失敗しました。book:%s, relId:%s",
+                    book.getPath(), relId);
+            throw new ApplicationException(msg, e);
         }
     }
     

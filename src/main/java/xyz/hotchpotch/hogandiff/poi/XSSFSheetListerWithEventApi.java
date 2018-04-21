@@ -150,7 +150,7 @@ import xyz.hotchpotch.hogandiff.common.BookType;
                 }
             }
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw new ApplicationException("Excelブックの読み込みに失敗しました。book:" + book.getPath(), e);
         }
     }
 }

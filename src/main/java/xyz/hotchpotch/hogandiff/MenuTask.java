@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -58,6 +60,21 @@ public class MenuTask extends Task<Path> {
         return new MenuTask(context);
     }
     
+    private static String getStackTrace(Throwable e) {
+        assert e != null;
+        
+        try (StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw)) {
+            
+            e.printStackTrace(pw);
+            pw.flush();
+            return sw.toString();
+            
+        } catch (IOException e1) {
+            return null;
+        }
+    }
+    
     // [instance members] ******************************************************
     
     private final Context context;
@@ -82,10 +99,10 @@ public class MenuTask extends Task<Path> {
             Path workDir = createWorkDirectory(0, 2);
             
             // 2.比較するシートの組み合わせの決定
-            List<Pair<String>> pairs = this.pairingSheets(2, 5);
+            List<Pair<String>> pairs = pairingSheets(2, 5);
             
             // 3.シート同士の比較
-            BResult bResult = this.compareSheets(pairs, 5, 70);
+            BResult bResult = compareSheets(pairs, 5, 70);
             
             // 4. 比較結果の表示（テキスト）
             if (context.get(Props.APP_SHOW_RESULT_TEXT)) {
@@ -103,14 +120,15 @@ public class MenuTask extends Task<Path> {
             return workDir;
             
         } catch (ApplicationException e) {
-            e.printStackTrace();
+            str.append(getStackTrace(e)).append(BR).append(BR);
+            updateMessage(str.toString());
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
-            String msg = "予期せぬエラーが発生しました。\n" + e.getMessage();
-            str.append(msg).append(BR).append(BR);
+            str.append("予期せぬエラーが発生しました。").append(BR);
+            str.append(getStackTrace(e)).append(BR).append(BR);
             updateMessage(str.toString());
-            throw new ApplicationException(msg, e);
+            throw new ApplicationException("予期せぬエラーが発生しました。", e);
         }
     }
     
