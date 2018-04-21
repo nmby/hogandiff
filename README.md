@@ -13,5 +13,5 @@ hogandiff（方眼Diff）はExcelファイル同士の差分検出ツールで�
 
 hogandiff（方眼Diff）はMITライセンスのもと公開しています。<br>
 詳細は次のファイルをご覧ください。
-* <a href="https://raw.githubusercontent.com/nmby/hogandiff/master/LICENSE">LICENSE</a>
-* <a href="https://raw.githubusercontent.com/nmby/hogandiff/master/NOTICE">NOTICE</a>
+* LICENSE
+* NOTICE
