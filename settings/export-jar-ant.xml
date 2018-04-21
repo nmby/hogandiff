@@ -7,7 +7,7 @@
     <property name="dir.workspace" value="${dir.buildfile}/.."/>
     <property name="dir.jarfile" value="C:/Users/user01/Desktop"/>
     <property name="my.version" value="0.1.0"/>
-    <property name="my.date" value="20180421"/>
+    <property name="my.date" value="20180422"/>
     <target name="create_run_jar">
         <jar destfile="${dir.jarfile}/hogandiff-${my.version}-${my.date}.jar">
             <manifest>
