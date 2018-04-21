@@ -325,7 +325,7 @@ public class MenuTask extends Task<Path> {
             updateMessage(str.toString());
             File file2 = context.get(Props.CURR_FILE2);
             Path storedBook2 = copyLoadPaintAndStoreBook(workDir, file2, bResult, Pair.Side.B);
-            str.append(String.format("  - %s\n\n", storedBook1.toString()));
+            str.append(String.format("  - %s\n\n", storedBook2.toString()));
             updateMessage(str.toString());
             updateProgress(progressBefore + total * 4 / 5, PROGRESS_MAX);
             
