@@ -18,12 +18,15 @@
             </manifest>
             <zipfileset src="jar-in-jar-loader.zip"/>
             <fileset dir="${dir.buildfile}/bin/main"/>
-            <zipfileset dir="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17" includes="poi-3.17.jar"/>
-            <zipfileset dir="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17" includes="poi-ooxml-3.17.jar"/>
-            <zipfileset dir="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17" includes="poi-ooxml-schemas-3.17.jar"/>
-            <zipfileset dir="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17/lib" includes="commons-codec-1.10.jar"/>
-            <zipfileset dir="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17/lib" includes="commons-collections4-4.1.jar"/>
-            <zipfileset dir="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17/ooxml-lib" includes="xmlbeans-2.6.0.jar"/>
+            <zipfileset file="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17/poi-3.17.jar"/>
+            <zipfileset file="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17/poi-ooxml-3.17.jar"/>
+            <zipfileset file="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17/poi-ooxml-schemas-3.17.jar"/>
+            <zipfileset file="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17/lib/commons-codec-1.10.jar"/>
+            <zipfileset file="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17/lib/commons-collections4-4.1.jar"/>
+            <zipfileset file="${dir.workspace}/lib/poi-3.17/poi-bin-3.17-20170915/poi-3.17/ooxml-lib/xmlbeans-2.6.0.jar"/>
+            <fileset file="${dir.workspace}/LICENSE"/>
+            <fileset file="${dir.workspace}/NOTICE"/>
+            <fileset file="${dir.workspace}/README.md"/>
         </jar>
     </target>
 </project>
