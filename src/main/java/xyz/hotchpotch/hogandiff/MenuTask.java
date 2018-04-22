@@ -424,7 +424,7 @@ public class MenuTask extends Task<Path> {
             POIUtils.clearColors(book);
             
             bResult.sheetNamePairs.stream()
-                    .filter(p -> p.get(side).isPresent())
+                    .filter(Pair::isPaired)
                     .forEach(p -> {
                         Sheet sheet = book.getSheet(p.get(side).get());
                         SResult sResult = bResult.sResults.get(p);

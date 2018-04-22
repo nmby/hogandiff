@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import xyz.hotchpotch.hogandiff.common.Pair;
 
+// TODO: 最小費用流問題のアルゴリズムで書き直す
 /**
  * 比較対象リストの要素順に関わりなく、最も一致度の高い要素同士からペアリングしていく {@link Correlator} の実装です。<br>
  * 
