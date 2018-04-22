@@ -87,7 +87,7 @@ public class Context {
         public static final Props<Boolean> APP_COMPARE_ON_VALUE = new Props<>(
                 true,
                 "application.compare.compareOnValue",
-                false,
+                true,
                 Boolean::valueOf,
                 String::valueOf);
         

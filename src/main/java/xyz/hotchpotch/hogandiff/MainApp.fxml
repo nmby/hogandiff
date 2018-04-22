@@ -118,12 +118,11 @@
                                     </CheckBox>
                                     <HBox maxWidth="1.7976931348623157E308" styleClass="option-item-pane" VBox.vgrow="NEVER">
                                        <children>
-                                          <RadioButton fx:id="compareOnFormula" mnemonicParsing="false" selected="true" text="数式を比較する" textOverrun="CLIP">
+                                          <RadioButton fx:id="compareOnValue" mnemonicParsing="false" selected="true" text="値を比較する" textOverrun="CLIP" HBox.hgrow="NEVER">
                                              <toggleGroup>
                                                 <ToggleGroup fx:id="optionCompareOn" />
-                                             </toggleGroup>
-                                          </RadioButton>
-                                          <RadioButton fx:id="compareOnValue" mnemonicParsing="false" text="値を比較する" textOverrun="CLIP" toggleGroup="$optionCompareOn" HBox.hgrow="NEVER" />
+                                             </toggleGroup></RadioButton>
+                                          <RadioButton fx:id="compareOnFormula" mnemonicParsing="false" text="数式を比較する" textOverrun="CLIP" toggleGroup="$optionCompareOn" />
                                        </children>
                                     </HBox>
                                  </children>
