@@ -3,6 +3,7 @@ package xyz.hotchpotch.hogandiff;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -29,6 +30,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioButton;
@@ -133,6 +135,9 @@ public class MainAppController {
     @FXML
     private Button deleteOldWorkDirs;
     
+    @FXML
+    private Hyperlink linkToWebsite;
+    
     private BooleanProperty isRunning = new SimpleBooleanProperty(false);
     private File prevSelected;
     private BooleanProperty settingsChanged = new SimpleBooleanProperty(false);
@@ -142,6 +147,10 @@ public class MainAppController {
     private void initialize() {
         appProps = Main.loadProperties();
         Context context = Context.Builder.of(appProps).build();
+        
+        // この汚いコードをどうにかしたい...
+        // イベントハンドラはScene builderで設定した方がよいのか？？
+        // 逆に見通しが悪くなるような気もするし...（悩み中）
         
         // バインディングの設定
         settingsPane.disableProperty().bind(isRunning);
@@ -216,6 +225,13 @@ public class MainAppController {
                     .showAndWait()
                     .filter(response -> response == ButtonType.OK)
                     .ifPresent(response -> deleteChildren(parent));
+        });
+        linkToWebsite.setOnAction(event -> {
+            try {
+                Desktop.getDesktop().browse(URI.create("http://hogandiff.hotchpotch.xyz/"));
+            } catch (IOException e) {
+                // nop
+            }
         });
         
         // 初期値の設定
