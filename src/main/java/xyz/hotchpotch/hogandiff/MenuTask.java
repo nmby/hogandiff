@@ -303,6 +303,7 @@ public class MenuTask extends Task<Path> {
      * @param progressAfter 処理後進捗率
      * @throws ApplicationException 処理に失敗した場合
      */
+    // TODO: シート同士の比較かつ比較対象ブックが同一の場合（シートだけが異なる場合）の挙動がおかしいので修正要
     private void showResultBooks(Path workDir, BResult bResult, int progressBefore, int progressAfter)
             throws ApplicationException {
         
