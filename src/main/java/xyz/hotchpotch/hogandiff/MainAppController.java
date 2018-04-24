@@ -287,13 +287,18 @@ public class MainAppController {
     }
     
     private void execute(ActionEvent event) {
-        isRunning.set(true);
         Context context = arrangeContext();
-        Task<Path> task = MenuTask.of(context);
+        if (!context.get(Props.CURR_MENU).isValidTargets(context)) {
+            new Alert(AlertType.INFORMATION, "同じブック同士／シート同士を比較することはできません。", ButtonType.OK)
+                    .showAndWait();
+            return;
+        }
         
+        isRunning.set(true);
+        
+        Task<Path> task = MenuTask.of(context);
         progress.progressProperty().bind(task.progressProperty());
         messages.textProperty().bind(task.messageProperty());
-        
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(task);
         
@@ -307,6 +312,7 @@ public class MainAppController {
                 isRunning.set(false);
             }
         });
+        
         task.addEventHandler(WorkerStateEvent.WORKER_STATE_FAILED, wse -> {
             executor.shutdown();
             progress.progressProperty().unbind();
