@@ -1,5 +1,6 @@
 package xyz.hotchpotch.hogandiff.excel;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -73,11 +74,14 @@ import xyz.hotchpotch.hogandiff.list.Correlator;
                         .collect(Collectors.groupingBy(verticality::applyAsInt));
                 
                 return IntStream.rangeClosed(start, end).parallel()
-                        .filter(map::containsKey)
                         .mapToObj(i -> {
-                            List<CellReplica> list = map.get(i);
-                            list.sort(Comparator.comparing(horizontality));
-                            return list;
+                            if (map.containsKey(i)) {
+                                List<CellReplica> list = map.get(i);
+                                list.sort(Comparator.comparing(horizontality));
+                                return list;
+                            } else {
+                                return Collections.<CellReplica>emptyList();
+                            }
                         })
                         .collect(Collectors.toList());
             };
