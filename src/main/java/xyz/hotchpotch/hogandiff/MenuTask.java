@@ -92,9 +92,6 @@ public class MenuTask extends Task<Path> {
     protected Path call() throws Exception {
         str = new StringBuilder();
         try {
-            // 0.入力チェック
-            menu.validateTargets(context);
-            
             // 1.作業用フォルダの作成
             Path workDir = createWorkDirectory(0, 2);
             

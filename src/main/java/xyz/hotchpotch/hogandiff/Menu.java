@@ -25,16 +25,13 @@ public enum Menu {
     COMPARE_BOOKS {
         
         @Override
-        protected void validateTargets(Context context) throws ApplicationException {
+        protected boolean isValidTargets(Context context) {
             assert context != null;
             
             String pathStr1 = context.get(Props.CURR_FILE1).getPath();
             String pathStr2 = context.get(Props.CURR_FILE2).getPath();
             
-            if (pathStr1.equals(pathStr2)) {
-                throw new ApplicationException(String.format(
-                        "同じブック同士を比較することはできません。\n - %s\n - %s", pathStr1, pathStr2));
-            }
+            return !pathStr1.equals(pathStr2);
         }
         
         @Override
@@ -64,7 +61,7 @@ public enum Menu {
     COMPARE_SHEETS {
         
         @Override
-        protected void validateTargets(Context context) throws ApplicationException {
+        protected boolean isValidTargets(Context context) {
             assert context != null;
             
             String pathStr1 = context.get(Props.CURR_FILE1).getPath();
@@ -72,11 +69,7 @@ public enum Menu {
             String sheetName1 = context.get(Props.CURR_SHEET_NAME1);
             String sheetName2 = context.get(Props.CURR_SHEET_NAME2);
             
-            if (pathStr1.equals(pathStr2) && sheetName1.equals(sheetName2)) {
-                throw new ApplicationException(String.format(
-                        "同じシート同士を比較することはできません。\n - %s : %s\n - %s : %s",
-                        pathStr1, sheetName1, pathStr2, sheetName2));
-            }
+            return !pathStr1.equals(pathStr2) || !sheetName1.equals(sheetName2);
         }
         
         @Override
@@ -96,9 +89,9 @@ public enum Menu {
      * 処理対象の妥当性を確認します。<br>
      * 
      * @param context コンテキスト
-     * @throws ApplicationException 処理に失敗した場合
+     * @return 処理対象として妥当な場合は {@code true}
      */
-    protected abstract void validateTargets(Context context) throws ApplicationException;
+    protected abstract boolean isValidTargets(Context context);
     
     /**
      * 比較すべきシート名の組み合わせのリストを返します。<br>
