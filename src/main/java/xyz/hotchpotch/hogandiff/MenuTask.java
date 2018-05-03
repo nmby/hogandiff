@@ -108,8 +108,7 @@ public class MenuTask extends Task<Path> {
             
             // 5. 比較結果の表示（Excel）
             if (context.get(Props.APP_SHOW_PAINTED_SHEETS)) {
-                if (menu == Menu.COMPARE_SHEETS
-                        && context.get(Props.CURR_FILE1).equals(context.get(Props.CURR_FILE2))) {
+                if (context.get(Props.CURR_FILE1).equals(context.get(Props.CURR_FILE2))) {
                     showResultBook1(workDir, bResult, 75, 98);
                 } else {
                     showResultBooks2(workDir, bResult, 75, 98);
@@ -351,7 +350,11 @@ public class MenuTask extends Task<Path> {
      * @param progressAfter 処理後進捗率
      * @throws ApplicationException 処理に失敗した場合
      */
-    private void showResultBooks2(Path workDir, BResult bResult, int progressBefore, int progressAfter)
+    private void showResultBooks2(
+            Path workDir,
+            BResult bResult,
+            int progressBefore,
+            int progressAfter)
             throws ApplicationException {
         
         try {
@@ -393,6 +396,15 @@ public class MenuTask extends Task<Path> {
         }
     }
     
+    /**
+     * 指定されたExcelブックをロードし、色を付け、保存します。<br>
+     * 
+     * @param workDir 保存先ディレクトリ
+     * @param file 対象のExcelブック
+     * @param bResult ブック同士の比較結果
+     * @param sides 処理対象の側
+     * @throws ApplicationException 処理に失敗した場合
+     */
     private void loadPaintAndStoreBook(
             Path workDir,
             Path file,
@@ -416,6 +428,15 @@ public class MenuTask extends Task<Path> {
         }
     }
     
+    /**
+     * 指定されたファイルを指定されたパスに読み書き可能なファイルとしてコピーします。<br>
+     * 
+     * @param src コピー対象のファイル
+     * @param dir コピー先ディレクトリ
+     * @param prefix コピー先ファイルに付けるファイル名プレフィクス
+     * @return コピーされたファイルのパス
+     * @throws ApplicationException 処理に失敗した場合
+     */
     private Path copyFile(File src, Path dir, String prefix) throws ApplicationException {
         assert src != null;
         assert dir != null;
@@ -461,6 +482,14 @@ public class MenuTask extends Task<Path> {
         }
     }
     
+    /**
+     * 指定されたExcelブックに比較結果の色を付けます。<br>
+     * 
+     * @param book 対象のExcelブック
+     * @param bResult ブック同士の比較結果
+     * @param sides 色を付けるシートの側
+     * @throws ApplicationException 処理に失敗した場合
+     */
     private void paintBook(Workbook book, BResult bResult, Pair.Side... sides)
             throws ApplicationException {
         
@@ -484,6 +513,13 @@ public class MenuTask extends Task<Path> {
         }
     }
     
+    /**
+     * 指定されたシートに比較結果の色を付けます。<br>
+     * 
+     * @param sheet 対象のシート
+     * @param sResult シート同士の比較結果
+     * @param side 対象シートの側
+     */
     private void paintSheet(Sheet sheet, SResult sResult, Pair.Side side) {
         assert sheet != null;
         assert sResult != null;
@@ -509,6 +545,13 @@ public class MenuTask extends Task<Path> {
         POIUtils.paintCells(sheet, addresses, color2);
     }
     
+    /**
+     * 指定されたブックを指定されたパスに保存します。<br>
+     * 
+     * @param book 対象のExcelブック
+     * @param target 保存するファイルパス
+     * @throws ApplicationException 処理に失敗した場合
+     */
     private void storeBook(Workbook book, Path target) throws ApplicationException {
         assert book != null;
         assert target != null;
