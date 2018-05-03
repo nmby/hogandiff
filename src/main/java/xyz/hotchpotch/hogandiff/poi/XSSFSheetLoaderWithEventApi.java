@@ -192,6 +192,9 @@ import xyz.hotchpotch.hogandiff.common.CellReplica;
             
             if ("c".equals(qName)) {
                 if (value != null) {
+                    if (type == CellType.e || type == CellType.n || type == CellType.str) {
+                        value = POIUtils.normalizeFormula(value);
+                    }
                     result.add(CellReplica.of(address, value));
                 }
                 

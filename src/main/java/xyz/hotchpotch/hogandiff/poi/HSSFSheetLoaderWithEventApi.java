@@ -188,7 +188,7 @@ import xyz.hotchpotch.hogandiff.common.CellReplica;
                                 throw new AssertionError(type);
                             }
                         } else {
-                            value = getFormulaString(formulaRec);
+                            value = POIUtils.normalizeFormula(getFormulaString(formulaRec));
                         }
                         break;
                     
@@ -231,8 +231,8 @@ import xyz.hotchpotch.hogandiff.common.CellReplica;
         // 次のサイトに貴重な参考情報があるものの、数式文字列を得るためにユーザーモデルAPI（HSSFWorkbook）を
         // 利用する必要があり、わざわざイベントモデルAPIで頑張っている意味がなくなってしまう。
         // http://www.ne.jp/asahi/hishidama/home/tech/apache/poi/cell.html#h_toFormulaString
-        // そのうち頑張ってコーディングすることとする。。。
-        // TODO: coding
+        // HSSFWorkbookから数式文字列を取得する場合は SheetLoaderWithUserApi を利用することとし、
+        // このクラスではサポート対象外とする。
         return "[formula]";
     }
     

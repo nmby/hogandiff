@@ -13,8 +13,6 @@ import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Test;
 
 import xyz.hotchpotch.hogandiff.ApplicationException;
-import xyz.hotchpotch.hogandiff.poi.HSSFSheetListerWithEventApi;
-import xyz.hotchpotch.hogandiff.poi.HSSFSheetLoaderWithEventApi;
 
 class HSSFSheetLoaderWithEventApiTest {
     
@@ -34,13 +32,13 @@ class HSSFSheetLoaderWithEventApiTest {
     
     @Test
     void testIsSupported() {
-        assertTrue(HSSFSheetListerWithEventApi.isSupported(SheetLoader1_normal_xls));
+        assertTrue(HSSFSheetLoaderWithEventApi.isSupported(SheetLoader1_normal_xls));
         
-        assertFalse(HSSFSheetListerWithEventApi.isSupported(SheetLoader1_normal_xlsx));
-        assertFalse(HSSFSheetListerWithEventApi.isSupported(SheetLoader1_normal_xlsm));
-        assertFalse(HSSFSheetListerWithEventApi.isSupported(SheetLoader1_normal_xlsb));
-        assertFalse(HSSFSheetListerWithEventApi.isSupported(SheetLoader1_normal_csv));
-        assertFalse(HSSFSheetListerWithEventApi.isSupported(SheetLoader1_normal));
+        assertFalse(HSSFSheetLoaderWithEventApi.isSupported(SheetLoader1_normal_xlsx));
+        assertFalse(HSSFSheetLoaderWithEventApi.isSupported(SheetLoader1_normal_xlsm));
+        assertFalse(HSSFSheetLoaderWithEventApi.isSupported(SheetLoader1_normal_xlsb));
+        assertFalse(HSSFSheetLoaderWithEventApi.isSupported(SheetLoader1_normal_csv));
+        assertFalse(HSSFSheetLoaderWithEventApi.isSupported(SheetLoader1_normal));
     }
     
     @Test
