@@ -1,7 +1,11 @@
 package xyz.hotchpotch.hogandiff.poi;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,8 +18,11 @@ import java.util.stream.StreamSupport;
 
 import org.apache.poi.hssf.usermodel.HSSFSheetConditionalFormatting;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -39,6 +46,114 @@ import xyz.hotchpotch.hogandiff.common.CellReplica;
 public class POIUtils {
     
     // [static members] ********************************************************
+    
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter
+            .ofPattern("yyyy/MM/dd HH:mm:ss.SSS");
+    
+    /**
+     * セルの形式が何であれ、セルの格納値を表す文字列を返します。<br>
+     * セルの形式が数式であり {@code returnCachedValue} が{@code true} の場合は、計算結果の値の文字列表現を返します。
+     * そうでない場合は、数式の文字列（例えば {@code "SUM(A4:B4)"}）を返します。<br>
+     * セルが空の場合は空文字列（{@code ""}）を返します。このメソッドが {@code null} を返すことはありません。<br>
+     * <br>
+     * このメソッドは、セルの表示形式は無視します。
+     * 例えば、セルの保持する値が {@code 3.14159} でありセルの表示形式が {@code "0.00"} のとき、
+     * このメソッドは {@code "3.14"} ではなく {@code "3.141592"} をクライアントに返します。<br>
+     * <br>
+     * 日付の扱いに関する補足：<br>
+     * このメソッドは、日付または時刻のフォーマットが指定されているセルの値を
+     * {@code "yyyy/MM/dd HH:mm:ss.SSS"} 形式の文字列に変換して返します。<br>
+     * Excelにおける日付・時刻の扱いは独特です。<br>
+     * 例えばセルに「{@code 10:27}」と入力したとき、Excel内部ではセルの値は「{@code 0.435417}」として管理されます。
+     * 一方で、Excelでは {@code 1900/1/1 00:00} が「{@code 1}」で表されます。<br>
+     * 従って、「{@code 0.435417}」というセル値を {@code "yyyy/MM/dd HH:mm:ss.SSS"} という形式で評価すると、
+     * {@code "1899/12/31 10:27:00.000"} という文字列になります。<br>
+     * 以上の理由により、このメソッドは「{@code 10:27}」と入力されたセルの値を
+     * {@code "1899/12/31 10:27:00.000"} という文字列で返します。<br>
+     * 
+     * @param cell 対象のセル
+     * @param returnCachedValue 対象のセルの形式が数式の場合に、数式ではなくキャッシュされた算出値を返す場合は {@code true}
+     * @return セルの格納値を表す文字列
+     * @throws NullPointerException {@code cell} が {@code null} の場合
+     * @throws IllegalStateException {@code cell} が未初期化状態の場合
+     * 
+     * @since 0.2.0
+     */
+    public static String getValue(Cell cell, boolean returnCachedValue) {
+        Objects.requireNonNull(cell, "cell");
+        
+        CellType type = returnCachedValue && cell.getCellTypeEnum() == CellType.FORMULA
+                ? cell.getCachedFormulaResultTypeEnum()
+                : cell.getCellTypeEnum();
+        
+        switch (type) {
+        case STRING:
+            return cell.getStringCellValue();
+        
+        case FORMULA:
+            return normalizeFormula(cell.getCellFormula());
+        
+        case BOOLEAN:
+            return String.valueOf(cell.getBooleanCellValue());
+        
+        case NUMERIC:
+            // 日付セルや独自書式セルの値の扱いは甚だ不完全なものの、
+            // diffツールとしては内容の比較を行えればよいのだと割り切り、
+            // これ以上に凝ったコーディングは行わないこととする。
+            if (DateUtil.isCellDateFormatted(cell)) {
+                Date date = cell.getDateCellValue();
+                LocalDateTime localDateTime = LocalDateTime
+                        .ofInstant(date.toInstant(), ZoneId.systemDefault());
+                return dateTimeFormatter.format(localDateTime);
+            } else {
+                String val = String.valueOf(cell.getNumericCellValue());
+                if (val.endsWith(".0")) {
+                    val = val.substring(0, val.length() - 2);
+                }
+                return val;
+            }
+            
+        case ERROR:
+            return ErrorEval.getText(cell.getErrorCellValue());
+        
+        case BLANK:
+            return "";
+        
+        case _NONE:
+            throw new IllegalStateException("cell type is _NONE.");
+            
+        default:
+            throw new AssertionError("unexpected cell type. cellTypeEnum: " + cell.getCellTypeEnum());
+        }
+    }
+    
+    /**
+     * 数式文字列を標準化して返します。<br>
+     * 例えばセルに「= 1 + 2」と入力されている場合、POIの各種APIによって
+     * " 1 + 2" と取得されたり "1+2" と取得されたりするため、
+     * 不要なスペースを取り除くことでこれらを標準化します。<br>
+     * 
+     * @param original 元の数式文字列
+     * @return 標準化された数式文字列
+     */
+    /*package*/ static String normalizeFormula(String original) {
+        StringBuilder str = new StringBuilder(original.trim());
+        boolean inString = false;
+        int n = 0;
+        
+        while (n < str.length()) {
+            if (str.charAt(n) == '"') {
+                inString = !inString;
+            } else if (str.charAt(n) == ' ' && !inString) {
+                str.deleteCharAt(n);
+                n--;
+            }
+            n++;
+        }
+        assert !inString;
+        
+        return str.toString();
+    }
     
     /**
      * 指定されたExcelブックに含まれるシート名の一覧を返します。<br>

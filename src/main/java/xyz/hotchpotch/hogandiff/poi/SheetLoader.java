@@ -30,8 +30,11 @@ public interface SheetLoader {
         if (XSSFSheetLoaderWithEventApi.isSupported(book)) {
             return XSSFSheetLoaderWithEventApi.of(extractCachedValue);
         }
-        if (HSSFSheetLoaderWithEventApi.isSupported(book)) {
+        if (HSSFSheetLoaderWithEventApi.isSupported(book) && extractCachedValue) {
             return HSSFSheetLoaderWithEventApi.of(extractCachedValue);
+        }
+        if (SheetLoaderWithUserApi.isSupported(book)) {
+            return SheetLoaderWithUserApi.of(extractCachedValue);
         }
         throw new UnsupportedOperationException(book.getPath());
     }

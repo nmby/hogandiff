@@ -133,14 +133,14 @@ public class TestFiles {
                 CellReplica.of("B4", "[e]"),
                 CellReplica.of("C4", "#REF!"),
                 CellReplica.of("D4", "#REF!"),
-                CellReplica.of("E4", " 1/0"),
+                CellReplica.of("E4", "1/0"),
                 CellReplica.of("F4", "#DIV/0!"),
                 CellReplica.of("G4", "#NAME?"),
                 
                 CellReplica.of("B8", "[str]"),
-                CellReplica.of("C8", " \"123\" & \"abc\""),
-                CellReplica.of("D8", " 123 + 456"),
-                CellReplica.of("E8", " SUM(C6:D6)")));
+                CellReplica.of("C8", "\"123\"&\"abc\""),
+                CellReplica.of("D8", "123+456"),
+                CellReplica.of("E8", "SUM(C6:D6)")));
     }
     
     public static final Set<CellReplica> cellsB_formula_giveup;
