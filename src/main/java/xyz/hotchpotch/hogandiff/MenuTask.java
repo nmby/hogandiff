@@ -108,7 +108,11 @@ public class MenuTask extends Task<Path> {
             
             // 5. 比較結果の表示（Excel）
             if (context.get(Props.APP_SHOW_PAINTED_SHEETS)) {
-                showResultBooks(workDir, bResult, 75, 98);
+                if (context.get(Props.CURR_FILE1).equals(context.get(Props.CURR_FILE2))) {
+                    showResultBook1(workDir, bResult, 75, 98);
+                } else {
+                    showResultBooks2(workDir, bResult, 75, 98);
+                }
             }
             
             str.append("処理が完了しました。").append(BR);
@@ -295,7 +299,8 @@ public class MenuTask extends Task<Path> {
     }
     
     /**
-     * 5. 比較結果をExcelブックとして保存して表示します。<br>
+     * 5. 比較結果をExcelブックとして保存して表示します。
+     * （同一のExcelブックに属するシート同士を比較する場合）<br>
      * 
      * @param workDir 作業用フォルダ
      * @param bResult Excelブック同士の比較結果
@@ -303,34 +308,25 @@ public class MenuTask extends Task<Path> {
      * @param progressAfter 処理後進捗率
      * @throws ApplicationException 処理に失敗した場合
      */
-    // TODO: シート同士の比較かつ比較対象ブックが同一の場合（シートだけが異なる場合）の挙動がおかしいので修正要
-    private void showResultBooks(Path workDir, BResult bResult, int progressBefore, int progressAfter)
+    private void showResultBook1(Path workDir, BResult bResult, int progressBefore, int progressAfter)
             throws ApplicationException {
         
         try {
             updateProgress(progressBefore, PROGRESS_MAX);
             int total = progressAfter - progressBefore;
             
-            str.append("Excelブックに比較結果の色を付けて保存しています(1/2)...").append(BR);
+            str.append("Excelブックに比較結果の色を付けて保存しています...").append(BR);
             updateMessage(str.toString());
-            File file1 = context.get(Props.CURR_FILE1);
-            Path storedBook1 = copyLoadPaintAndStoreBook(workDir, file1, bResult, Pair.Side.A);
-            str.append(String.format("  - %s\n\n", storedBook1.toString()));
-            updateMessage(str.toString());
-            updateProgress(progressBefore + total * 2 / 5, PROGRESS_MAX);
-            
-            str.append("Excelブックに比較結果の色を付けて保存しています(2/2)...").append(BR);
-            updateMessage(str.toString());
-            File file2 = context.get(Props.CURR_FILE2);
-            Path storedBook2 = copyLoadPaintAndStoreBook(workDir, file2, bResult, Pair.Side.B);
-            str.append(String.format("  - %s\n\n", storedBook2.toString()));
+            File file = context.get(Props.CURR_FILE1);
+            Path copy = copyFile(file, workDir, "");
+            loadPaintAndStoreBook(workDir, copy, bResult, Pair.Side.A, Pair.Side.B);
+            str.append(String.format("  - %s\n\n", copy.toString()));
             updateMessage(str.toString());
             updateProgress(progressBefore + total * 4 / 5, PROGRESS_MAX);
             
             str.append("比較結果のExcelブックを表示しています...").append(BR).append(BR);
             updateMessage(str.toString());
-            Desktop.getDesktop().open(storedBook1.toFile());
-            Desktop.getDesktop().open(storedBook2.toFile());
+            Desktop.getDesktop().open(copy.toFile());
             updateProgress(progressAfter, PROGRESS_MAX);
             
         } catch (ApplicationException e) {
@@ -344,30 +340,103 @@ public class MenuTask extends Task<Path> {
         }
     }
     
-    private Path copyLoadPaintAndStoreBook(
+    /**
+     * 5. 比較結果をExcelブックとして保存して表示します。
+     * （2つのExcelブック同士または異なるExcelブックに属するシート同士を比較する場合）<br>
+     * 
+     * @param workDir 作業用フォルダ
+     * @param bResult Excelブック同士の比較結果
+     * @param progressBefore 処理前進捗率
+     * @param progressAfter 処理後進捗率
+     * @throws ApplicationException 処理に失敗した場合
+     */
+    private void showResultBooks2(
             Path workDir,
-            File file,
             BResult bResult,
-            Pair.Side side)
+            int progressBefore,
+            int progressAfter)
+            throws ApplicationException {
+        
+        try {
+            updateProgress(progressBefore, PROGRESS_MAX);
+            int total = progressAfter - progressBefore;
+            
+            str.append("Excelブックに比較結果の色を付けて保存しています(1/2)...").append(BR);
+            updateMessage(str.toString());
+            File file1 = context.get(Props.CURR_FILE1);
+            Path copy1 = copyFile(file1, workDir, "【A】");
+            loadPaintAndStoreBook(workDir, copy1, bResult, Pair.Side.A);
+            str.append(String.format("  - %s\n\n", copy1.toString()));
+            updateMessage(str.toString());
+            updateProgress(progressBefore + total * 2 / 5, PROGRESS_MAX);
+            
+            str.append("Excelブックに比較結果の色を付けて保存しています(2/2)...").append(BR);
+            updateMessage(str.toString());
+            File file2 = context.get(Props.CURR_FILE2);
+            Path copy2 = copyFile(file2, workDir, "【B】");
+            loadPaintAndStoreBook(workDir, copy2, bResult, Pair.Side.B);
+            str.append(String.format("  - %s\n\n", copy2.toString()));
+            updateMessage(str.toString());
+            updateProgress(progressBefore + total * 4 / 5, PROGRESS_MAX);
+            
+            str.append("比較結果のExcelブックを表示しています...").append(BR).append(BR);
+            updateMessage(str.toString());
+            Desktop.getDesktop().open(copy1.toFile());
+            Desktop.getDesktop().open(copy2.toFile());
+            updateProgress(progressAfter, PROGRESS_MAX);
+            
+        } catch (ApplicationException e) {
+            str.append(e.getMessage()).append(BR).append(BR);
+            updateMessage(str.toString());
+            throw e;
+        } catch (Exception e) {
+            str.append("比較結果Excelブックの保存と表示に失敗しました。").append(BR).append(BR);
+            updateMessage(str.toString());
+            throw new ApplicationException("比較結果Excelブックの保存と表示に失敗しました。", e);
+        }
+    }
+    
+    /**
+     * 指定されたExcelブックをロードし、色を付け、保存します。<br>
+     * 
+     * @param workDir 保存先ディレクトリ
+     * @param file 対象のExcelブック
+     * @param bResult ブック同士の比較結果
+     * @param sides 処理対象の側
+     * @throws ApplicationException 処理に失敗した場合
+     */
+    private void loadPaintAndStoreBook(
+            Path workDir,
+            Path file,
+            BResult bResult,
+            Pair.Side... sides)
             throws ApplicationException {
         
         assert workDir != null;
         assert file != null;
         assert bResult != null;
-        assert side != null;
+        assert sides != null;
         
-        Path copy = copyFile(file, workDir, String.format("【%s】", side));
-        try (Workbook book = loadBook(copy)) {
-            paintBook(book, bResult, side);
-            storeBook(book, copy);
+        try (Workbook book = loadBook(file)) {
+            POIUtils.clearColors(book);
+            paintBook(book, bResult, sides);
+            storeBook(book, file);
         } catch (IOException e) {
             // nop : failed to auto-close book.
         } finally {
             System.gc();
         }
-        return copy;
     }
     
+    /**
+     * 指定されたファイルを指定されたパスに読み書き可能なファイルとしてコピーします。<br>
+     * 
+     * @param src コピー対象のファイル
+     * @param dir コピー先ディレクトリ
+     * @param prefix コピー先ファイルに付けるファイル名プレフィクス
+     * @return コピーされたファイルのパス
+     * @throws ApplicationException 処理に失敗した場合
+     */
     private Path copyFile(File src, Path dir, String prefix) throws ApplicationException {
         assert src != null;
         assert dir != null;
@@ -413,20 +482,30 @@ public class MenuTask extends Task<Path> {
         }
     }
     
-    private void paintBook(Workbook book, BResult bResult, Pair.Side side) throws ApplicationException {
+    /**
+     * 指定されたExcelブックに比較結果の色を付けます。<br>
+     * 
+     * @param book 対象のExcelブック
+     * @param bResult ブック同士の比較結果
+     * @param sides 色を付けるシートの側
+     * @throws ApplicationException 処理に失敗した場合
+     */
+    private void paintBook(Workbook book, BResult bResult, Pair.Side... sides)
+            throws ApplicationException {
+        
         assert book != null;
         assert bResult != null;
-        assert side != null;
+        assert sides != null;
         
         try {
-            POIUtils.clearColors(book);
-            
             bResult.sheetNamePairs.stream()
                     .filter(Pair::isPaired)
                     .forEach(p -> {
-                        Sheet sheet = book.getSheet(p.get(side).get());
                         SResult sResult = bResult.sResults.get(p);
-                        paintSheet(sheet, sResult, side);
+                        for (Pair.Side side : sides) {
+                            Sheet sheet = book.getSheet(p.get(side).get());
+                            paintSheet(sheet, sResult, side);
+                        }
                     });
             
         } catch (Exception e) {
@@ -434,6 +513,13 @@ public class MenuTask extends Task<Path> {
         }
     }
     
+    /**
+     * 指定されたシートに比較結果の色を付けます。<br>
+     * 
+     * @param sheet 対象のシート
+     * @param sResult シート同士の比較結果
+     * @param side 対象シートの側
+     */
     private void paintSheet(Sheet sheet, SResult sResult, Pair.Side side) {
         assert sheet != null;
         assert sResult != null;
@@ -459,6 +545,13 @@ public class MenuTask extends Task<Path> {
         POIUtils.paintCells(sheet, addresses, color2);
     }
     
+    /**
+     * 指定されたブックを指定されたパスに保存します。<br>
+     * 
+     * @param book 対象のExcelブック
+     * @param target 保存するファイルパス
+     * @throws ApplicationException 処理に失敗した場合
+     */
     private void storeBook(Workbook book, Path target) throws ApplicationException {
         assert book != null;
         assert target != null;
