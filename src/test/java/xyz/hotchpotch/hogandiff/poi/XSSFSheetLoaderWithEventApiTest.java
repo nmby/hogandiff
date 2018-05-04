@@ -13,8 +13,6 @@ import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Test;
 
 import xyz.hotchpotch.hogandiff.ApplicationException;
-import xyz.hotchpotch.hogandiff.poi.XSSFSheetListerWithEventApi;
-import xyz.hotchpotch.hogandiff.poi.XSSFSheetLoaderWithEventApi;
 
 class XSSFSheetLoaderWithEventApiTest {
     
@@ -233,24 +231,5 @@ class XSSFSheetLoaderWithEventApiTest {
         assertEquals(
                 cellsE,
                 formulaLoader.loadSheet(SheetLoader1_normal_xlsm, "おおお"));
-    }
-    
-    @Test
-    void testLoadSheet_グラフシート() throws ApplicationException {
-        // 現状の実装では、グラフシートからは空のセルデータセットが返される。
-        // この挙動を仕様として追認することにする。
-        assertEquals(
-                cellsA,
-                valueLoader.loadSheet(SheetLoader1_normal_xlsx, "えええ"));
-        assertEquals(
-                cellsA,
-                formulaLoader.loadSheet(SheetLoader1_normal_xlsx, "えええ"));
-        
-        assertEquals(
-                cellsA,
-                valueLoader.loadSheet(SheetLoader1_normal_xlsm, "えええ"));
-        assertEquals(
-                cellsA,
-                formulaLoader.loadSheet(SheetLoader1_normal_xlsm, "えええ"));
     }
 }

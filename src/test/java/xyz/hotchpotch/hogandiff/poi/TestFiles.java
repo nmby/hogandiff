@@ -53,7 +53,7 @@ public class TestFiles {
             "TestSheetLister3_dummy.xls").getFile());
     
     public static final List<String> sheetNames1 = Arrays.asList(
-            "あああ", "いいい", "ううう", "えええ", "あ");
+            "あああ", "いいい", "ううう", "あ");
     
     public static final List<String> sheetNames2 = Arrays.asList(
             "全角　ﾊﾝｶｸ 123 abc ①②③ 1⃣2⃣3⃣　高髙 ★", "!\"#$%&'()-=^~|@`{;+},<.>_ 　");
@@ -63,7 +63,6 @@ public class TestFiles {
         sheetsId1.put("あああ", "rId1");
         sheetsId1.put("いいい", "rId2");
         sheetsId1.put("ううう", "rId3");
-        sheetsId1.put("えええ", "rId4");
         sheetsId1.put("あ", "rId5");
     }
     
