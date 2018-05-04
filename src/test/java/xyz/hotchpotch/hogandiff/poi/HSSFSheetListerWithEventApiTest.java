@@ -8,7 +8,6 @@ import static xyz.hotchpotch.hogandiff.poi.TestFiles.*;
 import org.junit.jupiter.api.Test;
 
 import xyz.hotchpotch.hogandiff.ApplicationException;
-import xyz.hotchpotch.hogandiff.poi.HSSFSheetListerWithEventApi;
 
 class HSSFSheetListerWithEventApiTest {
     
@@ -56,9 +55,6 @@ class HSSFSheetListerWithEventApiTest {
     
     @Test
     void testGetSheetNames_通常ケース() throws ApplicationException {
-        // 現状の実装では、戻り値のリストにグラフシートのシート名も含まれる。
-        // 本当は除外したいが、イベントモデルAPIでは面倒な処理が必要となるため、
-        // 現状の挙動を仕様として追認することとする。
         assertEquals(
                 sheetNames1,
                 lister.getSheetNames(SheetLister1_normal_xls));

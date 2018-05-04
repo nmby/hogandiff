@@ -2,13 +2,16 @@ package xyz.hotchpotch.hogandiff.poi;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -39,20 +42,47 @@ import xyz.hotchpotch.hogandiff.common.BookType;
         
         // [instance members] --------------------------------------------------
         
-        private List<String> sheetNames;
-        private Map<String, String> sheetsData;
+        private List<Map.Entry<String, String>> sheetsInfo;
         
         @Override
         public void startDocument() {
-            sheetNames = new ArrayList<>();
-            sheetsData = new HashMap<>();
+            sheetsInfo = new ArrayList<>();
         }
         
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) {
             if ("sheet".equals(qName)) {
-                sheetNames.add(attributes.getValue("name"));
-                sheetsData.put(attributes.getValue("name"), attributes.getValue("r:id"));
+                sheetsInfo.add(new SimpleEntry<>(
+                        attributes.getValue("name"),
+                        attributes.getValue("r:id")));
+            }
+        }
+    }
+    
+    private static class XSSFSheetJudgeHandler extends DefaultHandler {
+        
+        // [static members] ----------------------------------------------------
+        
+        // [instance members] --------------------------------------------------
+        
+        private Optional<Boolean> isChartSheet;
+        private boolean isFirstElement;
+        
+        @Override
+        public void startDocument() {
+            isChartSheet = Optional.empty();
+            isFirstElement = true;
+        }
+        
+        @Override
+        public void startElement(String uri, String localName, String qName, Attributes attributes) {
+            if (isFirstElement) {
+                if ("chartsheet".equals(qName)) {
+                    isChartSheet = Optional.of(true);
+                } else if ("worksheet".equals(qName)) {
+                    isChartSheet = Optional.of(false);
+                }
+                isFirstElement = false;
             }
         }
     }
@@ -101,12 +131,15 @@ import xyz.hotchpotch.hogandiff.common.BookType;
             throw new IllegalArgumentException(book.getName());
         }
         
-        XSSFSheetListingHandler handler = parse(book);
-        return handler.sheetNames;
+        List<Map.Entry<String, String>> sheetsInfo = parse(book);
+        return sheetsInfo.stream()
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
     
     /**
-     * Excelブックに含まれるシート名とrelIdを取得し、キー：シート名、値：relId のマップとして返します。<br>
+     * Excelブックに含まれるワークシートのシート名とrelIdを取得し、
+     * キー：シート名、値：relId のマップとして返します。<br>
      * 
      * @param book Excelブック
      * @return キー：シート名、値：relId のマップ
@@ -120,35 +153,60 @@ import xyz.hotchpotch.hogandiff.common.BookType;
             throw new IllegalArgumentException(book.getName());
         }
         
-        XSSFSheetListingHandler handler = parse(book);
-        return handler.sheetsData;
+        List<Map.Entry<String, String>> sheetsInfo = parse(book);
+        return sheetsInfo.stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
     
     /**
-     * Excelブックを読み込み、パースを行った {@link XSSFSheetListingHandler} オブジェクトを返します。<br>
+     * Excelブックを読み込み、ワークシート情報（シート名＋relId）のリストを返します。
+     * 返されるリストにグラフシートの情報は含まれません。<br>
      * 
      * @param book Excelブック
-     * @return パースを行った {@link XSSFSheetListingHandler} オブジェクト
+     * @return ワークシート情報（シート名＋relId）のリスト
      * @throws ApplicationException 処理に失敗した場合
      */
-    private XSSFSheetListingHandler parse(File book) throws ApplicationException {
+    private List<Map.Entry<String, String>> parse(File book) throws ApplicationException {
         assert book != null;
         assert isSupported(book);
         
-        try {
-            XMLReader parser = XMLReaderFactory.createXMLReader();
-            XSSFSheetListingHandler handler = new XSSFSheetListingHandler();
-            parser.setContentHandler(handler);
+        try (OPCPackage pkg = OPCPackage.open(book, PackageAccess.READ)) {
+            XSSFReader reader = new XSSFReader(pkg);
             
-            try (OPCPackage pkg = OPCPackage.open(book, PackageAccess.READ)) {
-                XSSFReader reader = new XSSFReader(pkg);
+            // まず、グラフシートも含むシート情報（シート名＋relId）の一覧を取得する。
+            List<Map.Entry<String, String>> sheetsInfo;
+            try (InputStream bookData = reader.getWorkbookData()) {
+                InputSource bookSource = new InputSource(bookData);
+                XMLReader bookParser = XMLReaderFactory.createXMLReader();
+                XSSFSheetListingHandler bookHandler = new XSSFSheetListingHandler();
+                bookParser.setContentHandler(bookHandler);
                 
-                try (InputStream bookData = reader.getWorkbookData()) {
-                    InputSource bookSource = new InputSource(bookData);
-                    parser.parse(bookSource);
-                    return handler;
+                bookParser.parse(bookSource);
+                sheetsInfo = bookHandler.sheetsInfo;
+            }
+            
+            // 次に、得られた一覧のそれぞれについて、ワークシートかグラフシートかを調べ、
+            // グラフシートの場合は一覧から除外する。
+            XMLReader sheetParser = XMLReaderFactory.createXMLReader();
+            XSSFSheetJudgeHandler sheetHandler = new XSSFSheetJudgeHandler();
+            sheetParser.setContentHandler(sheetHandler);
+            Iterator<Map.Entry<String, String>> itr = sheetsInfo.iterator();
+            while (itr.hasNext()) {
+                Map.Entry<String, String> key = itr.next();
+                
+                try (InputStream sheetData = reader.getSheet(key.getValue())) {
+                    InputSource sheetSource = new InputSource(sheetData);
+                    
+                    sheetParser.parse(sheetSource);
+                    if (sheetHandler.isChartSheet.get()) {
+                        itr.remove();
+                    }
                 }
             }
+            
+            // ワークシートだけが含まれるシート情報の一覧を返す。
+            return sheetsInfo;
+            
         } catch (Exception e) {
             throw new ApplicationException("Excelブックの読み込みに失敗しました。book:" + book.getPath(), e);
         }

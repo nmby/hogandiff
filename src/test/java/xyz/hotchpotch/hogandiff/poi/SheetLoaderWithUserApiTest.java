@@ -182,29 +182,4 @@ class SheetLoaderWithUserApiTest {
                 xssfFormulaLoader.loadSheet(SheetLoader1_normal_xlsm, "おおお"),
                 formulaLoader.loadSheet(SheetLoader1_normal_xlsm, "おおお"));
     }
-    
-    @Test
-    void testLoadSheet_グラフシート() throws ApplicationException {
-        // TODO:HSSFグラフシートからデータを拾ってしまう問題に対処する。
-        // assertEquals(
-        //         hssfValueLoader.loadSheet(SheetLoader1_normal_xls, "えええ"),
-        //         valueLoader.loadSheet(SheetLoader1_normal_xls, "えええ"));
-        // assertEquals(
-        //         cellsA,
-        //         formulaLoader.loadSheet(SheetLoader1_normal_xls, "えええ"));
-        
-        assertEquals(
-                xssfValueLoader.loadSheet(SheetLoader1_normal_xlsx, "えええ"),
-                valueLoader.loadSheet(SheetLoader1_normal_xlsx, "えええ"));
-        assertEquals(
-                xssfFormulaLoader.loadSheet(SheetLoader1_normal_xlsx, "えええ"),
-                formulaLoader.loadSheet(SheetLoader1_normal_xlsx, "えええ"));
-        
-        assertEquals(
-                xssfValueLoader.loadSheet(SheetLoader1_normal_xlsm, "えええ"),
-                valueLoader.loadSheet(SheetLoader1_normal_xlsm, "えええ"));
-        assertEquals(
-                xssfFormulaLoader.loadSheet(SheetLoader1_normal_xlsm, "えええ"),
-                formulaLoader.loadSheet(SheetLoader1_normal_xlsm, "えええ"));
-    }
 }

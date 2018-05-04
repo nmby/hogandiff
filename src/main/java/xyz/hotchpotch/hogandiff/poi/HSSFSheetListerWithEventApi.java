@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Queue;
 import java.util.Set;
 
 import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
@@ -36,6 +38,7 @@ import xyz.hotchpotch.hogandiff.common.BookType;
         
         // [instance members] --------------------------------------------------
         
+        private Queue<String> queue = null;
         private List<String> sheetNames = null;
         
         private HSSFSheetListingListener() {
@@ -46,14 +49,28 @@ import xyz.hotchpotch.hogandiff.common.BookType;
             switch (record.getSid()) {
             case BOFRecord.sid:
                 BOFRecord bofRecord = (BOFRecord) record;
-                if (bofRecord.getType() == BOFRecord.TYPE_WORKBOOK) {
+                
+                switch (bofRecord.getType()) {
+                case BOFRecord.TYPE_WORKBOOK:
+                    queue = new LinkedList<>();
                     sheetNames = new ArrayList<>();
+                    break;
+                    
+                case BOFRecord.TYPE_WORKSHEET:
+                    sheetNames.add(queue.remove());
+                    break;
+                    
+                case BOFRecord.TYPE_CHART:
+                    // グラフシートは処理対象外とする。
+                    queue.remove();
+                    break;
                 }
+                
                 break;
             
             case BoundSheetRecord.sid:
                 BoundSheetRecord bSheetRecord = (BoundSheetRecord) record;
-                sheetNames.add(bSheetRecord.getSheetname());
+                queue.add(bSheetRecord.getSheetname());
                 break;
             }
         }
