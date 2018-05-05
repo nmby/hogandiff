@@ -2,6 +2,7 @@ package xyz.hotchpotch.hogandiff.common;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -139,11 +140,65 @@ public class Pair<T> {
     }
     
     /**
+     * 要素aに値が存在する場合は値を返し、それ以外の場合はNoSuchElementExceptionをスローします。<br>
+     * 
+     * @return 要素aの非null値
+     * @throws NoSuchElementException 要素aが値を保持しない場合
+     */
+    public T a() {
+        return a.get();
+    }
+    
+    /**
+     * 要素aに値が存在する場合は値を返し、それ以外の場合はotherを返します。<br>
+     * 
+     * @param other 要素aが値を保持しない場合に返す値（nullも可）
+     * @return 要素aの値（存在する場合）、それ以外の場合はother
+     */
+    public T aOrElse(T other) {
+        return a.orElse(other);
+    }
+    
+    /**
+     * 要素bに値が存在する場合は値を返し、それ以外の場合はNoSuchElementExceptionをスローします。<br>
+     * 
+     * @return 要素bの非null値
+     * @throws NoSuchElementException 要素bが値を保持しない場合
+     */
+    public T b() {
+        return b.get();
+    }
+    
+    /**
+     * 要素bに値が存在する場合は値を返し、それ以外の場合はotherを返します。<br>
+     * 
+     * @param other 要素bが値を保持しない場合に返す値（nullも可）
+     * @return 要素bの値（存在する場合）、それ以外の場合はother
+     */
+    public T bOrElse(T other) {
+        return b.orElse(other);
+    }
+    
+    /**
+     * 指定された側の要素が存在する場合は値を返し、それ以外の場合はNoSuchElementExceptionをスローします。<br>
+     * 
+     * @param side 要素の側
+     * @return 指定された側の要素の非null値
+     * @throws NoSuchElementException 指定された側の要素が値を保持しない場合
+     * @throws NullPointerException {@code side} が {@code null} の場合
+     */
+    public T get(Side side) {
+        Objects.requireNonNull(side, "side");
+        return side == Side.A ? a.get() : b.get();
+    }
+    
+    /**
      * 要素aを返します。<br>
      * 
      * @return 要素a
      */
-    public Optional<T> a() {
+    @Deprecated
+    public Optional<T> a2() {
         return a;
     }
     
@@ -152,7 +207,8 @@ public class Pair<T> {
      * 
      * @return 要素b
      */
-    public Optional<T> b() {
+    @Deprecated
+    public Optional<T> b2() {
         return b;
     }
     
@@ -163,7 +219,8 @@ public class Pair<T> {
      * @return 指定された側の要素
      * @throws NullPointerException {@code side} が {@code null} の場合
      */
-    public Optional<T> get(Side side) {
+    @Deprecated
+    public Optional<T> get2(Side side) {
         Objects.requireNonNull(side, "side");
         return side == Side.A ? a : b;
     }
@@ -173,6 +230,7 @@ public class Pair<T> {
      * 
      * @return 要素a, 要素bが格納されたマップ
      */
+    @Deprecated
     public Map<Side, Optional<T>> items() {
         Map<Side, Optional<T>> items = new EnumMap<>(Side.class);
         items.put(Side.A, a);
@@ -217,7 +275,7 @@ public class Pair<T> {
      */
     public boolean isOnly(Side side) {
         Objects.requireNonNull(side, "side");
-        return get(side).isPresent() && !get(side.opposite()).isPresent();
+        return get2(side).isPresent() && !get2(side.opposite()).isPresent();
     }
     
     /**
@@ -230,7 +288,26 @@ public class Pair<T> {
     }
     
     /**
-     * {@code null} でない要素a, 要素bそれぞれに指定された関数を適用して得られた要素を保持する {@link Pair} オブジェクトを返します。<br>
+     * 要素aが非null値を保持する場合は {@code true}, それ以外の場合は {@code false} を返します。<br>
+     * 
+     * @return 要素aが非null値を保持する場合は {@code true}
+     */
+    public boolean isPresentA() {
+        return a.isPresent();
+    }
+    
+    /**
+     * 要素bが非null値を保持する場合は {@code true}, それ以外の場合は {@code false} を返します。<br>
+     * 
+     * @return 要素bが非null値を保持する場合は {@code true}
+     */
+    public boolean isPresentB() {
+        return b.isPresent();
+    }
+    
+    /**
+     * {@code null} でない要素a, 要素bそれぞれに指定された関数を適用して得られた要素を保持する
+     * {@link Pair} オブジェクトを返します。<br>
      * 
      * @param <U> 変換後の要素の型
      * @param mapper 変換関数
@@ -243,7 +320,8 @@ public class Pair<T> {
     }
     
     /**
-     * {@code null} でない要素a, 要素bそれぞれに指定された関数を適用して得られた要素を保持する {@link Pair} オブジェクトを返します。<br>
+     * {@code null} でない要素a, 要素bそれぞれに指定された関数を適用して得られた要素を保持する
+     * {@link Pair} オブジェクトを返します。<br>
      * 
      * @param <U> 変換後の要素の型
      * @param mapper 変換関数

@@ -51,8 +51,8 @@ public enum Menu {
             
             return pairs.stream()
                     .map(p -> Pair.ofNullable(
-                            p.a().map(sheetNames1::get).orElse(null),
-                            p.b().map(sheetNames2::get).orElse(null)))
+                            p.a2().map(sheetNames1::get).orElse(null),
+                            p.b2().map(sheetNames2::get).orElse(null)))
                     .collect(Collectors.toList());
         }
     },

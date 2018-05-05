@@ -85,8 +85,8 @@ public class BResult {
     public String toString() {
         StringBuilder str = new StringBuilder();
         
-        str.append("ブックA : ").append(files.a().get().getPath()).append(BR);
-        str.append("ブックB : ").append(files.b().get().getPath()).append(BR);
+        str.append("ブックA : ").append(files.a2().get().getPath()).append(BR);
+        str.append("ブックB : ").append(files.b2().get().getPath()).append(BR);
         str.append(BR);
         
         str.append("■サマリ========================================================================").append(BR);
@@ -120,8 +120,8 @@ public class BResult {
     private String getResult(Function<SResult, String> recorder) {
         return sheetNamePairs.stream().map(p -> {
             StringBuilder str = new StringBuilder();
-            str.append("シートA : ").append(p.a().orElse("（なし）")).append(BR);
-            str.append("シートB : ").append(p.b().orElse("（なし）")).append(BR);
+            str.append("シートA : ").append(p.a2().orElse("（なし）")).append(BR);
+            str.append("シートB : ").append(p.b2().orElse("（なし）")).append(BR);
             
             if (p.isPaired()) {
                 str.append(recorder.apply(sResults.get(p)));
