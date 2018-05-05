@@ -198,7 +198,7 @@ import xyz.hotchpotch.hogandiff.common.BookType;
                     InputSource sheetSource = new InputSource(sheetData);
                     
                     sheetParser.parse(sheetSource);
-                    if (sheetHandler.isChartSheet.get()) {
+                    if (sheetHandler.isChartSheet.orElseThrow(IllegalStateException::new)) {
                         itr.remove();
                     }
                 }
