@@ -46,15 +46,15 @@ public interface BookPainter {
     /**
      * 指定されたExcelに色を付け、指定されたパスに保存します。<br>
      * 
-     * @param src 処理対象Excelブックのファイルパス
-     * @param dst 保存先ファイルパス
+     * @param book 処理対象Excelブックのファイルパス
+     * @param copy 保存先ファイルパス
      * @param bResult 比較結果
      * @param sides 処理対象の側
      * @throws ApplicationException 処理に失敗した場合
      */
     void paintAndSave(
-            Path src,
-            Path dst,
+            File book,
+            Path copy,
             BResult bResult,
             Pair.Side... sides)
             throws ApplicationException;

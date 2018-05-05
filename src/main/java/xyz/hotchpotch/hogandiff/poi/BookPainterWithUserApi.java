@@ -87,49 +87,49 @@ import xyz.hotchpotch.hogandiff.excel.SResult;
      */
     @Override
     public void paintAndSave(
-            Path src,
-            Path dst,
+            File book,
+            Path copy,
             BResult bResult,
             Side... sides)
             throws ApplicationException {
         
-        Objects.requireNonNull(src, "src");
-        Objects.requireNonNull(dst, "dst");
+        Objects.requireNonNull(book, "book");
+        Objects.requireNonNull(copy, "copy");
         Objects.requireNonNull(bResult, "bResult");
         Objects.requireNonNull(sides, "sides");
-        if (!isSupported(src.toFile())) {
-            throw new IllegalArgumentException(src.toString());
+        if (!isSupported(book)) {
+            throw new IllegalArgumentException(book.getPath());
         }
         
         // 1. 目的のファイルをコピーする。
         try {
-            Files.copy(src, dst);
-            File newFile = dst.toFile();
+            Files.copy(book.toPath(), copy);
+            File newFile = copy.toFile();
             newFile.setReadable(true, false);
             newFile.setWritable(true, false);
         } catch (Exception e) {
-            throw new ApplicationException("Excelファイルのコピーに失敗しました。\n" + dst.toString(), e);
+            throw new ApplicationException("Excelファイルのコピーに失敗しました。\n" + copy.toString(), e);
         }
         
         // 2. コピーしたファイルをExcelブックとしてロードする。
-        try (InputStream is = Files.newInputStream(dst);
-                Workbook book = WorkbookFactory.create(is)) {
+        try (InputStream is = Files.newInputStream(copy);
+                Workbook wb = WorkbookFactory.create(is)) {
             
             // 3. 色を付ける。
-            POIUtils.clearColors(book);
+            POIUtils.clearColors(wb);
             bResult.sheetNamePairs.stream()
                     .filter(Pair::isPaired)
                     .forEach(p -> {
                         SResult sResult = bResult.sResults.get(p);
                         for (Pair.Side side : sides) {
-                            Sheet sheet = book.getSheet(p.get(side));
+                            Sheet sheet = wb.getSheet(p.get(side));
                             paintSheet(sheet, sResult, side);
                         }
                     });
             
             // 4. 着色したExcelブックをコピーしたファイルに上書き保存する。
-            try (OutputStream os = Files.newOutputStream(dst)) {
-                book.write(os);
+            try (OutputStream os = Files.newOutputStream(copy)) {
+                wb.write(os);
             }
             
         } catch (Exception e) {

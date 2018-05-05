@@ -32,6 +32,7 @@ import xyz.hotchpotch.hogandiff.common.Pair;
 import xyz.hotchpotch.hogandiff.excel.BResult;
 import xyz.hotchpotch.hogandiff.excel.SComparator;
 import xyz.hotchpotch.hogandiff.excel.SResult;
+import xyz.hotchpotch.hogandiff.poi.BookPainter;
 import xyz.hotchpotch.hogandiff.poi.POIUtils;
 
 /**
@@ -318,8 +319,9 @@ public class MenuTask extends Task<Path> {
             str.append("Excelブックに比較結果の色を付けて保存しています...").append(BR);
             updateMessage(str.toString());
             File file = context.get(Props.CURR_FILE1);
-            Path copy = copyFile(file, workDir, "");
-            loadPaintAndStoreBook(workDir, copy, bResult, Pair.Side.A, Pair.Side.B);
+            Path copy = workDir.resolve(file.getName());
+            BookPainter painter = BookPainter.of(file, context);
+            painter.paintAndSave(file, copy, bResult, Pair.Side.A, Pair.Side.B);
             str.append(String.format("  - %s\n\n", copy.toString()));
             updateMessage(str.toString());
             updateProgress(progressBefore + total * 4 / 5, PROGRESS_MAX);
@@ -364,8 +366,9 @@ public class MenuTask extends Task<Path> {
             str.append("Excelブックに比較結果の色を付けて保存しています(1/2)...").append(BR);
             updateMessage(str.toString());
             File file1 = context.get(Props.CURR_FILE1);
-            Path copy1 = copyFile(file1, workDir, "【A】");
-            loadPaintAndStoreBook(workDir, copy1, bResult, Pair.Side.A);
+            Path copy1 = workDir.resolve("【A】" + file1.getName());
+            BookPainter painter1 = BookPainter.of(file1, context);
+            painter1.paintAndSave(file1, copy1, bResult, Pair.Side.A);
             str.append(String.format("  - %s\n\n", copy1.toString()));
             updateMessage(str.toString());
             updateProgress(progressBefore + total * 2 / 5, PROGRESS_MAX);
@@ -373,8 +376,9 @@ public class MenuTask extends Task<Path> {
             str.append("Excelブックに比較結果の色を付けて保存しています(2/2)...").append(BR);
             updateMessage(str.toString());
             File file2 = context.get(Props.CURR_FILE2);
-            Path copy2 = copyFile(file2, workDir, "【B】");
-            loadPaintAndStoreBook(workDir, copy2, bResult, Pair.Side.B);
+            Path copy2 = workDir.resolve("【B】" + file2.getName());
+            BookPainter painter2 = BookPainter.of(file2, context);
+            painter2.paintAndSave(file2, copy2, bResult, Pair.Side.B);
             str.append(String.format("  - %s\n\n", copy2.toString()));
             updateMessage(str.toString());
             updateProgress(progressBefore + total * 4 / 5, PROGRESS_MAX);
