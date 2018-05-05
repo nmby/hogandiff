@@ -11,7 +11,7 @@ import xyz.hotchpotch.hogandiff.excel.BResult;
 
 /**
  * Excelブックの差分箇所に色を付けるペインターを表します。<br>
- * これは、{@link #paintAndSave(Path, Path, BResult, xyz.hotchpotch.hogandiff.common.Pair.Side...)}
+ * これは、{@link #paintAndSave(File, Path, BResult, xyz.hotchpotch.hogandiff.common.Pair.Side...)}
  * を関数メソッドに持つ関数型インタフェースです。<br>
  * 
  * @author nmby

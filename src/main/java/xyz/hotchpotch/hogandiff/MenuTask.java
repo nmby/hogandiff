@@ -4,8 +4,6 @@ import java.awt.Desktop;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
@@ -17,13 +15,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.ss.util.CellAddress;
 
 import javafx.concurrent.Task;
 import xyz.hotchpotch.hogandiff.Context.Props;
@@ -397,174 +388,6 @@ public class MenuTask extends Task<Path> {
             str.append("比較結果Excelブックの保存と表示に失敗しました。").append(BR).append(BR);
             updateMessage(str.toString());
             throw new ApplicationException("比較結果Excelブックの保存と表示に失敗しました。", e);
-        }
-    }
-    
-    /**
-     * 指定されたExcelブックをロードし、色を付け、保存します。<br>
-     * 
-     * @param workDir 保存先ディレクトリ
-     * @param file 対象のExcelブック
-     * @param bResult ブック同士の比較結果
-     * @param sides 処理対象の側
-     * @throws ApplicationException 処理に失敗した場合
-     */
-    private void loadPaintAndStoreBook(
-            Path workDir,
-            Path file,
-            BResult bResult,
-            Pair.Side... sides)
-            throws ApplicationException {
-        
-        assert workDir != null;
-        assert file != null;
-        assert bResult != null;
-        assert sides != null;
-        
-        try (Workbook book = loadBook(file)) {
-            POIUtils.clearColors(book);
-            paintBook(book, bResult, sides);
-            storeBook(book, file);
-        } catch (IOException e) {
-            // nop : failed to auto-close book.
-        } finally {
-            System.gc();
-        }
-    }
-    
-    /**
-     * 指定されたファイルを指定されたパスに読み書き可能なファイルとしてコピーします。<br>
-     * 
-     * @param src コピー対象のファイル
-     * @param dir コピー先ディレクトリ
-     * @param prefix コピー先ファイルに付けるファイル名プレフィクス
-     * @return コピーされたファイルのパス
-     * @throws ApplicationException 処理に失敗した場合
-     */
-    private Path copyFile(File src, Path dir, String prefix) throws ApplicationException {
-        assert src != null;
-        assert dir != null;
-        assert prefix != null;
-        
-        Path target = dir.resolve(prefix + src.getName());
-        try {
-            src.setReadable(true, false);
-            src.setWritable(true, false);
-            Files.copy(src.toPath(), target);
-            return target;
-            
-        } catch (Exception e) {
-            throw new ApplicationException("Excelファイルのコピーに失敗しました。\n" + target.toString(), e);
-        }
-    }
-    
-    /**
-     * Excelブックをファイルからロードして返します。<br>
-     * 
-     * @param bookPath Excelブックのパス
-     * @return Excelブック
-     * @throws ApplicationException 処理に失敗した場合
-     */
-    private Workbook loadBook(Path bookPath) throws ApplicationException {
-        assert bookPath != null;
-        
-        if (!Files.exists(bookPath)) {
-            throw new ApplicationException("ファイルが存在しません。\n" + bookPath);
-        }
-        if (!Files.isReadable(bookPath)) {
-            throw new ApplicationException("ファイルが読取不可です。\n" + bookPath);
-        }
-        
-        try (InputStream is = Files.newInputStream(bookPath)) {
-            return WorkbookFactory.create(is);
-        } catch (EncryptedDocumentException e) {
-            throw new ApplicationException("ファイルが暗号化されています。\n" + bookPath, e);
-        } catch (InvalidFormatException e) {
-            throw new ApplicationException("ファイルフォーマットが不正です。\n" + bookPath, e);
-        } catch (Exception e) {
-            throw new ApplicationException("Excelブックの読込みに失敗しました。\n" + bookPath, e);
-        }
-    }
-    
-    /**
-     * 指定されたExcelブックに比較結果の色を付けます。<br>
-     * 
-     * @param book 対象のExcelブック
-     * @param bResult ブック同士の比較結果
-     * @param sides 色を付けるシートの側
-     * @throws ApplicationException 処理に失敗した場合
-     */
-    private void paintBook(Workbook book, BResult bResult, Pair.Side... sides)
-            throws ApplicationException {
-        
-        assert book != null;
-        assert bResult != null;
-        assert sides != null;
-        
-        try {
-            bResult.sheetNamePairs.stream()
-                    .filter(Pair::isPaired)
-                    .forEach(p -> {
-                        SResult sResult = bResult.sResults.get(p);
-                        for (Pair.Side side : sides) {
-                            Sheet sheet = book.getSheet(p.get(side));
-                            paintSheet(sheet, sResult, side);
-                        }
-                    });
-            
-        } catch (Exception e) {
-            throw new ApplicationException("差分結果の着色に失敗しました。", e);
-        }
-    }
-    
-    /**
-     * 指定されたシートに比較結果の色を付けます。<br>
-     * 
-     * @param sheet 対象のシート
-     * @param sResult シート同士の比較結果
-     * @param side 対象シートの側
-     */
-    private void paintSheet(Sheet sheet, SResult sResult, Pair.Side side) {
-        assert sheet != null;
-        assert sResult != null;
-        assert side != null;
-        
-        short color1 = context.get(Props.APP_REDUNDANT_COLOR);
-        short color2 = context.get(Props.APP_DIFF_COLOR);
-        
-        sResult.redundantRows.ifPresent(p -> {
-            List<Integer> rows = p.get(side);
-            POIUtils.paintRows(sheet, rows, color1);
-        });
-        
-        sResult.redundantColumns.ifPresent(p -> {
-            List<Integer> columns = p.get(side);
-            POIUtils.paintColumns(sheet, columns, color1);
-        });
-        
-        Set<CellAddress> addresses = sResult.diffCells.stream()
-                .map(p -> p.get(side))
-                .map(cell -> new CellAddress(cell.row(), cell.column()))
-                .collect(Collectors.toSet());
-        POIUtils.paintCells(sheet, addresses, color2);
-    }
-    
-    /**
-     * 指定されたブックを指定されたパスに保存します。<br>
-     * 
-     * @param book 対象のExcelブック
-     * @param target 保存するファイルパス
-     * @throws ApplicationException 処理に失敗した場合
-     */
-    private void storeBook(Workbook book, Path target) throws ApplicationException {
-        assert book != null;
-        assert target != null;
-        
-        try (OutputStream os = Files.newOutputStream(target)) {
-            book.write(os);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ApplicationException("Excelブックの保存に失敗しました。\n" + target, e);
         }
     }
 }
