@@ -1,7 +1,5 @@
 package xyz.hotchpotch.hogandiff.common;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
@@ -193,52 +191,6 @@ public class Pair<T> {
     }
     
     /**
-     * 要素aを返します。<br>
-     * 
-     * @return 要素a
-     */
-    @Deprecated
-    public Optional<T> a2() {
-        return a;
-    }
-    
-    /**
-     * 要素bを返します。<br>
-     * 
-     * @return 要素b
-     */
-    @Deprecated
-    public Optional<T> b2() {
-        return b;
-    }
-    
-    /**
-     * 指定された側の要素を返します。<br>
-     * 
-     * @param side 要素の側
-     * @return 指定された側の要素
-     * @throws NullPointerException {@code side} が {@code null} の場合
-     */
-    @Deprecated
-    public Optional<T> get2(Side side) {
-        Objects.requireNonNull(side, "side");
-        return side == Side.A ? a : b;
-    }
-    
-    /**
-     * 要素a, 要素bが格納されたマップを返します。<br>
-     * 
-     * @return 要素a, 要素bが格納されたマップ
-     */
-    @Deprecated
-    public Map<Side, Optional<T>> items() {
-        Map<Side, Optional<T>> items = new EnumMap<>(Side.class);
-        items.put(Side.A, a);
-        items.put(Side.B, b);
-        return items;
-    }
-    
-    /**
      * 要素a, 要素bがともに格納されているかを返します。<br>
      * 一方または双方が {@code null} の場合は {@code false} を返します。<br>
      * 
@@ -275,7 +227,7 @@ public class Pair<T> {
      */
     public boolean isOnly(Side side) {
         Objects.requireNonNull(side, "side");
-        return get2(side).isPresent() && !get2(side.opposite()).isPresent();
+        return isPresent(side) && !isPresent(side.opposite());
     }
     
     /**
@@ -303,6 +255,18 @@ public class Pair<T> {
      */
     public boolean isPresentB() {
         return b.isPresent();
+    }
+    
+    /**
+     * 指定された側の要素が非null値を保持する場合は {@code true}, それ以外の場合は {@code false} を返します。<br>
+     * 
+     * @param side 要素の側
+     * @return 指定された側の要素が非null値を保持する場合は {@code true}
+     * @throws NullPointerException {@code side} が {@code null} の場合
+     */
+    public boolean isPresent(Side side) {
+        Objects.requireNonNull(side, "side");
+        return side == Side.A ? isPresentA() : isPresentB();
     }
     
     /**
