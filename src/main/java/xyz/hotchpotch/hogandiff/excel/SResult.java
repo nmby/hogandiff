@@ -105,14 +105,14 @@ public class SResult {
         
         redundantRows.ifPresent(p -> str.append(String.format(
                 "\t余剰行 : シートA - %s, シートB - %s",
-                p.a2().get().isEmpty() ? "（なし）" : p.a2().get().size() + "行",
-                p.b2().get().isEmpty() ? "（なし）" : p.b2().get().size() + "行"))
+                p.a().isEmpty() ? "（なし）" : p.a().size() + "行",
+                p.b().isEmpty() ? "（なし）" : p.b().size() + "行"))
                 .append(BR));
         
         redundantColumns.ifPresent(p -> str.append(String.format(
                 "\t余剰列 : シートA - %s, シートB - %s",
-                p.a2().get().isEmpty() ? "（なし）" : p.a2().get().size() + "列",
-                p.b2().get().isEmpty() ? "（なし）" : p.b2().get().size() + "列"))
+                p.a().isEmpty() ? "（なし）" : p.a().size() + "列",
+                p.b().isEmpty() ? "（なし）" : p.b().size() + "列"))
                 .append(BR));
         
         str.append(String.format("\t差分セル : %s",
@@ -132,32 +132,32 @@ public class SResult {
         
         redundantRows.ifPresent(p -> {
             str.append(BR).append("\tシートA上の余剰行 :").append(BR);
-            if (p.a2().get().isEmpty()) {
+            if (p.a().isEmpty()) {
                 str.append("\t\t（なし）").append(BR);
             } else {
-                p.a2().get().forEach(i -> str.append("\t\t行").append(i + 1).append(BR));
+                p.a().forEach(i -> str.append("\t\t行").append(i + 1).append(BR));
             }
             str.append(BR).append("\tシートB上の余剰行 :").append(BR);
-            if (p.b2().get().isEmpty()) {
+            if (p.b().isEmpty()) {
                 str.append("\t\t（なし）").append(BR);
             } else {
-                p.b2().get().forEach(i -> str.append("\t\t行").append(i + 1).append(BR));
+                p.b().forEach(i -> str.append("\t\t行").append(i + 1).append(BR));
             }
             str.append(BR);
         });
         redundantColumns.ifPresent(p -> {
             str.append("\tシートA上の余剰列 :").append(BR);
-            if (p.a2().get().isEmpty()) {
+            if (p.a().isEmpty()) {
                 str.append("\t\t（なし）").append(BR);
             } else {
-                p.a2().get().forEach(j -> str.append(
+                p.a().forEach(j -> str.append(
                         String.format("\t\t%s列", CellReplica.getColumnName(j))).append(BR));
             }
             str.append(BR).append("\tシートB上の余剰列 :").append(BR);
-            if (p.b2().get().isEmpty()) {
+            if (p.b().isEmpty()) {
                 str.append("\t\t（なし）").append(BR);
             } else {
-                p.b2().get().forEach(j -> str.append(
+                p.b().forEach(j -> str.append(
                         String.format("\t\t%s列", CellReplica.getColumnName(j))).append(BR));
             }
             str.append(BR);
@@ -168,8 +168,8 @@ public class SResult {
         } else {
             diffCells.forEach(p -> {
                 str.append(BR);
-                str.append("\t\tセルA : ").append(p.a2().get()).append(BR);
-                str.append("\t\tセルB : ").append(p.b2().get()).append(BR);
+                str.append("\t\tセルA : ").append(p.a()).append(BR);
+                str.append("\t\tセルB : ").append(p.b()).append(BR);
             });
         }
         

@@ -51,7 +51,7 @@ import xyz.hotchpotch.hogandiff.list.Correlator;
             
             Pair<Integer> range = range(cellsA, cellsB, verticality);
             
-            return IntStream.rangeClosed(range.a2().get(), range.b2().get())
+            return IntStream.rangeClosed(range.a(), range.b())
                     .mapToObj(n -> Pair.of(n, n))
                     .collect(Collectors.toList());
         };
@@ -65,10 +65,10 @@ import xyz.hotchpotch.hogandiff.list.Correlator;
             assert cellsA != null;
             assert cellsB != null;
             
-            int start = range(cellsA, cellsB, verticality).a2().get();
+            int start = range(cellsA, cellsB, verticality).a();
             
             Function<Set<CellReplica>, List<List<CellReplica>>> converter = cells -> {
-                int end = range(cells, verticality).b2().get();
+                int end = range(cells, verticality).b();
                 Map<Integer, List<CellReplica>> map = cells.stream()
                         .filter(c -> !"".equals(c.value()))
                         .collect(Collectors.groupingBy(verticality::applyAsInt));
@@ -178,8 +178,8 @@ import xyz.hotchpotch.hogandiff.list.Correlator;
         Pair<Integer> rangeB = range(cellsB, extractor);
         
         return Pair.of(
-                Math.min(rangeA.a2().get(), rangeB.a2().get()),
-                Math.max(rangeA.b2().get(), rangeB.b2().get()));
+                Math.min(rangeA.a(), rangeB.a()),
+                Math.max(rangeA.b(), rangeB.b()));
     }
     
     // [instance members] ******************************************************

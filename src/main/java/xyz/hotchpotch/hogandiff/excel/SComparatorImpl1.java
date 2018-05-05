@@ -68,18 +68,18 @@ import xyz.hotchpotch.hogandiff.common.Pair;
         
         // 余剰行を収集する。
         List<Integer> redundantRowsA = considerRowGaps
-                ? rowPairs.stream().filter(Pair::isOnlyA).map(p -> p.a2().get()).collect(Collectors.toList())
+                ? rowPairs.stream().filter(Pair::isOnlyA).map(p -> p.a()).collect(Collectors.toList())
                 : null;
         List<Integer> redundantRowsB = considerRowGaps
-                ? rowPairs.stream().filter(Pair::isOnlyB).map(p -> p.b2().get()).collect(Collectors.toList())
+                ? rowPairs.stream().filter(Pair::isOnlyB).map(p -> p.b()).collect(Collectors.toList())
                 : null;
         
         // 余剰列を収集する。
         List<Integer> redundantColumnsA = considerColumnGaps
-                ? columnPairs.stream().filter(Pair::isOnlyA).map(p -> p.a2().get()).collect(Collectors.toList())
+                ? columnPairs.stream().filter(Pair::isOnlyA).map(p -> p.a()).collect(Collectors.toList())
                 : null;
         List<Integer> redundantColumnsB = considerColumnGaps
-                ? columnPairs.stream().filter(Pair::isOnlyB).map(p -> p.b2().get()).collect(Collectors.toList())
+                ? columnPairs.stream().filter(Pair::isOnlyB).map(p -> p.b()).collect(Collectors.toList())
                 : null;
         
         // 差分セルを収集する。
@@ -120,12 +120,12 @@ import xyz.hotchpotch.hogandiff.common.Pair;
                 .collect(Collectors.toMap(CellReplica::address, Function.identity()));
         
         return rowPairs.parallelStream().filter(Pair::isPaired).flatMap(rp -> {
-            int rowA = rp.a2().get();
-            int rowB = rp.b2().get();
+            int rowA = rp.a();
+            int rowB = rp.b();
             
             return columnPairs.parallelStream().filter(Pair::isPaired).map(cp -> {
-                int columnA = cp.a2().get();
-                int columnB = cp.b2().get();
+                int columnA = cp.a();
+                int columnB = cp.b();
                 String addrA = CellReplica.getAddress(rowA, columnA);
                 String addrB = CellReplica.getAddress(rowB, columnB);
                 CellReplica cellA = mapA.get(addrA);

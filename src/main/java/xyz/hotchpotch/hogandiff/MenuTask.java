@@ -183,8 +183,8 @@ public class MenuTask extends Task<Path> {
             List<Pair<String>> pairs = menu.getPairsOfSheetNames(context);
             if (menu == Menu.COMPARE_BOOKS) {
                 pairs.forEach(p -> str.append(String.format("  - [%s]  vs  [%s]\n",
-                        p.a2().orElse("（なし）"),
-                        p.b2().orElse("（なし）"))));
+                        p.aOrElse("（なし）"),
+                        p.bOrElse("（なし）"))));
                 str.append(BR);
                 updateMessage(str.toString());
             }
@@ -230,8 +230,8 @@ public class MenuTask extends Task<Path> {
             int i = 0;
             for (Pair<String> pair : pairedPairs) {
                 i++;
-                String sheetName1 = pair.a2().get();
-                String sheetName2 = pair.b2().get();
+                String sheetName1 = pair.a();
+                String sheetName2 = pair.b();
                 
                 str.append(String.format(
                         "シートを比較しています(%d/%d)...\n  - A : %s\n  - B : %s\n",
@@ -503,7 +503,7 @@ public class MenuTask extends Task<Path> {
                     .forEach(p -> {
                         SResult sResult = bResult.sResults.get(p);
                         for (Pair.Side side : sides) {
-                            Sheet sheet = book.getSheet(p.get2(side).get());
+                            Sheet sheet = book.getSheet(p.get(side));
                             paintSheet(sheet, sResult, side);
                         }
                     });
@@ -529,17 +529,17 @@ public class MenuTask extends Task<Path> {
         short color2 = context.get(Props.APP_DIFF_COLOR);
         
         sResult.redundantRows.ifPresent(p -> {
-            List<Integer> rows = p.get2(side).get();
+            List<Integer> rows = p.get(side);
             POIUtils.paintRows(sheet, rows, color1);
         });
         
         sResult.redundantColumns.ifPresent(p -> {
-            List<Integer> columns = p.get2(side).get();
+            List<Integer> columns = p.get(side);
             POIUtils.paintColumns(sheet, columns, color1);
         });
         
         Set<CellAddress> addresses = sResult.diffCells.stream()
-                .map(p -> p.get2(side).get())
+                .map(p -> p.get(side))
                 .map(cell -> new CellAddress(cell.row(), cell.column()))
                 .collect(Collectors.toSet());
         POIUtils.paintCells(sheet, addresses, color2);
