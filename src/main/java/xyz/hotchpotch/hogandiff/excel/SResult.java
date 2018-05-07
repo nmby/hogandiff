@@ -2,9 +2,11 @@ package xyz.hotchpotch.hogandiff.excel;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import xyz.hotchpotch.hogandiff.common.CellReplica;
 import xyz.hotchpotch.hogandiff.common.Pair;
@@ -18,6 +20,46 @@ import xyz.hotchpotch.hogandiff.common.Pair;
 public class SResult {
     
     // [static members] ********************************************************
+    
+    /**
+     * 2つのExcelシートの比較結果のうち、一方のシートの差分箇所を表す不変クラスです。<br>
+     * 
+     * @author nmby
+     * @since 0.3.1
+     */
+    public static class Piece {
+        
+        // [static members] ----------------------------------------------------
+        
+        // [instance members] --------------------------------------------------
+        
+        // 不変なフィールドは getter を設けずに直接公開してしまう。
+        // https://www.ibm.com/developerworks/jp/java/library/j-ft4/index.html
+        
+        /** 余剰行インデックス（0開始）のリスト */
+        public final List<Integer> redundantRows;
+        
+        /** 余剰列インデックス（0開始）のリスト */
+        public final List<Integer> redundantColumns;
+        
+        /** 差分セルのリスト */
+        public final List<CellReplica> diffCells;
+        
+        private Piece(
+                List<Integer> redundantRows,
+                List<Integer> redundantColumns,
+                List<CellReplica> diffCells) {
+            
+            assert redundantRows != null;
+            assert redundantColumns != null;
+            assert diffCells != null;
+            
+            // このオブジェクトを不変にするために防御的コピーをしたうえで変更不可コレクションでマップする。
+            this.redundantRows = Collections.unmodifiableList(new ArrayList<>(redundantRows));
+            this.redundantColumns = Collections.unmodifiableList(new ArrayList<>(redundantColumns));
+            this.diffCells = Collections.unmodifiableList(new ArrayList<>(diffCells));
+        }
+    }
     
     private static final String BR = System.lineSeparator();
     
@@ -62,13 +104,25 @@ public class SResult {
     // https://www.ibm.com/developerworks/jp/java/library/j-ft4/index.html
     
     /** 余剰行インデックス（0開始）のリスト。比較において行の余剰/欠損を考慮しなかった場合は {@link Optional#empty()} */
+    @Deprecated
     public final Optional<Pair<List<Integer>>> redundantRows;
     
     /** 余剰列インデックス（0開始）のリスト。比較において列の余剰/欠損を考慮しなかった場合は {@link Optional#empty()} */
+    @Deprecated
     public final Optional<Pair<List<Integer>>> redundantColumns;
     
     /** 差分セルのリスト。差分なしの場合は長さ0のリスト */
+    @Deprecated
     public final List<Pair<CellReplica>> diffCells;
+    
+    /** 比較において行の余剰/欠損を考慮した場合は {@code true} */
+    public final boolean considerRowGaps;
+    
+    /** 比較において列の余剰/欠損を考慮した場合は {@code true} */
+    public final boolean considerColumnGaps;
+    
+    /** 各シートの差分箇所 */
+    public final Pair<Piece> pieces;
     
     private SResult(
             List<Integer> redundantRowsA,
@@ -93,6 +147,19 @@ public class SResult {
                         Collections.unmodifiableList(new ArrayList<>(redundantColumnsA)),
                         Collections.unmodifiableList(new ArrayList<>(redundantColumnsB))));
         this.diffCells = Collections.unmodifiableList(new ArrayList<>(diffCells));
+        
+        considerRowGaps = (redundantRowsA != null);
+        considerColumnGaps = (redundantColumnsA != null);
+        
+        this.pieces = Pair.of(
+                new Piece(
+                        Optional.ofNullable(redundantRowsA).orElse(Collections.emptyList()),
+                        Optional.ofNullable(redundantColumnsA).orElse(Collections.emptyList()),
+                        diffCells.stream().map(Pair::a).collect(Collectors.toList())),
+                new Piece(
+                        Optional.ofNullable(redundantRowsB).orElse(Collections.emptyList()),
+                        Optional.ofNullable(redundantColumnsB).orElse(Collections.emptyList()),
+                        diffCells.stream().map(Pair::b).collect(Collectors.toList())));
     }
     
     /**
@@ -103,20 +170,29 @@ public class SResult {
     public String getSummary() {
         StringBuilder str = new StringBuilder();
         
-        redundantRows.ifPresent(p -> str.append(String.format(
-                "\t余剰行 : シートA - %s, シートB - %s",
-                p.a().isEmpty() ? "（なし）" : p.a().size() + "行",
-                p.b().isEmpty() ? "（なし）" : p.b().size() + "行"))
-                .append(BR));
+        if (considerRowGaps) {
+            List<Integer> rowsA = pieces.a().redundantRows;
+            List<Integer> rowsB = pieces.b().redundantRows;
+            str.append(String.format(
+                    "\t余剰行 : シートA - %s, シートB - %s",
+                    rowsA.isEmpty() ? "（なし）" : rowsA.size() + "行",
+                    rowsB.isEmpty() ? "（なし）" : rowsB.size() + "行"))
+                    .append(BR);
+        }
         
-        redundantColumns.ifPresent(p -> str.append(String.format(
-                "\t余剰列 : シートA - %s, シートB - %s",
-                p.a().isEmpty() ? "（なし）" : p.a().size() + "列",
-                p.b().isEmpty() ? "（なし）" : p.b().size() + "列"))
-                .append(BR));
+        if (considerColumnGaps) {
+            List<Integer> columnsA = pieces.a().redundantColumns;
+            List<Integer> columnsB = pieces.b().redundantColumns;
+            str.append(String.format(
+                    "\t余剰列 : シートA - %s, シートB - %s",
+                    columnsA.isEmpty() ? "（なし）" : columnsA.size() + "列",
+                    columnsB.isEmpty() ? "（なし）" : columnsB.size() + "列"))
+                    .append(BR);
+        }
         
+        List<CellReplica> cells = pieces.a().diffCells;
         str.append(String.format("\t差分セル : %s",
-                diffCells.isEmpty() ? "（なし）" : "各シート" + diffCells.size() + "セル"))
+                cells.isEmpty() ? "（なし）" : "各シート" + cells.size() + "セル"))
                 .append(BR);
         
         return str.toString();
@@ -130,47 +206,45 @@ public class SResult {
     public String getDetail() {
         StringBuilder str = new StringBuilder();
         
-        redundantRows.ifPresent(p -> {
-            str.append(BR).append("\tシートA上の余剰行 :").append(BR);
-            if (p.a().isEmpty()) {
-                str.append("\t\t（なし）").append(BR);
-            } else {
-                p.a().forEach(i -> str.append("\t\t行").append(i + 1).append(BR));
+        if (considerRowGaps) {
+            for (Pair.Side side : Pair.Side.values()) {
+                List<Integer> rows = pieces.get(side).redundantRows;
+                str.append(BR).append(String.format("\tシート%s上の余剰行 :", side)).append(BR);
+                if (rows.isEmpty()) {
+                    str.append("\t\t（なし）").append(BR);
+                } else {
+                    rows.forEach(i -> str.append("\t\t行").append(i + 1).append(BR));
+                }
             }
-            str.append(BR).append("\tシートB上の余剰行 :").append(BR);
-            if (p.b().isEmpty()) {
-                str.append("\t\t（なし）").append(BR);
-            } else {
-                p.b().forEach(i -> str.append("\t\t行").append(i + 1).append(BR));
+        }
+        
+        if (considerColumnGaps) {
+            for (Pair.Side side : Pair.Side.values()) {
+                List<Integer> columns = pieces.get(side).redundantColumns;
+                str.append(BR).append(String.format("\tシート%s上の余剰列 :", side)).append(BR);
+                if (columns.isEmpty()) {
+                    str.append("\t\t（なし）").append(BR);
+                } else {
+                    columns.forEach(j -> str.append(
+                            String.format("\t\t%s列", CellReplica.getColumnName(j))).append(BR));
+                }
             }
-            str.append(BR);
-        });
-        redundantColumns.ifPresent(p -> {
-            str.append("\tシートA上の余剰列 :").append(BR);
-            if (p.a().isEmpty()) {
-                str.append("\t\t（なし）").append(BR);
-            } else {
-                p.a().forEach(j -> str.append(
-                        String.format("\t\t%s列", CellReplica.getColumnName(j))).append(BR));
-            }
-            str.append(BR).append("\tシートB上の余剰列 :").append(BR);
-            if (p.b().isEmpty()) {
-                str.append("\t\t（なし）").append(BR);
-            } else {
-                p.b().forEach(j -> str.append(
-                        String.format("\t\t%s列", CellReplica.getColumnName(j))).append(BR));
-            }
-            str.append(BR);
-        });
-        str.append("\t差分セル :");
-        if (diffCells.isEmpty()) {
+        }
+        
+        str.append(BR).append("\t差分セル :");
+        if (pieces.a().diffCells.isEmpty()) {
             str.append(BR).append("\t\t（なし）").append(BR);
         } else {
-            diffCells.forEach(p -> {
+            Iterator<CellReplica> itrA = pieces.a().diffCells.iterator();
+            Iterator<CellReplica> itrB = pieces.b().diffCells.iterator();
+            while (itrA.hasNext()) {
+                CellReplica cellA = itrA.next();
+                CellReplica cellB = itrB.next();
                 str.append(BR);
-                str.append("\t\tセルA : ").append(p.a()).append(BR);
-                str.append("\t\tセルB : ").append(p.b()).append(BR);
-            });
+                str.append("\t\tセルA : ").append(cellA).append(BR);
+                str.append("\t\tセルB : ").append(cellB).append(BR);
+            }
+            assert !itrB.hasNext();
         }
         
         return str.toString();
