@@ -3,6 +3,7 @@ package xyz.hotchpotch.hogandiff.excel;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -129,7 +130,7 @@ import xyz.hotchpotch.hogandiff.common.Pair;
             int rowA = rp.a();
             int rowB = rp.b();
             
-            return columnPairs.parallelStream().filter(Pair::isPaired).map(cp -> {
+            return columnPairs.stream().filter(Pair::isPaired).map(cp -> {
                 int columnA = cp.a();
                 int columnB = cp.b();
                 String addrA = CellReplica.getAddress(rowA, columnA);
@@ -142,8 +143,8 @@ import xyz.hotchpotch.hogandiff.common.Pair;
                 return valueA.equals(valueB)
                         ? null
                         : Pair.of(
-                                cellA == null ? CellReplica.of(addrA, "") : cellA,
-                                cellB == null ? CellReplica.of(addrB, "") : cellB);
+                                Optional.ofNullable(cellA).orElseGet(() -> CellReplica.of(addrA, "")),
+                                Optional.ofNullable(cellB).orElseGet(() -> CellReplica.of(addrB, "")));
             });
         }).filter(p -> p != null).collect(Collectors.toList());
     }

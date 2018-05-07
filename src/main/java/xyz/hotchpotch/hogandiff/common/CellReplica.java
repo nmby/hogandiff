@@ -20,7 +20,7 @@ public class CellReplica {
      * @param row 行インデックス（0開始）
      * @param column 列インデックス（0開始）
      * @param value セルの値（空セルの場合は {@code null} ではなく {@code ""}）
-     * @return 新しいオブジェクト
+     * @return 新しい {@link CellReplica} オブジェクト
      * @throws NullPointerException {@code value} が {@code null} の場合
      * @throws IllegalArgumentException {@code row}, {@code column} のいずれかが {@code 0} 未満の場合
      */
@@ -37,7 +37,7 @@ public class CellReplica {
      * 
      * @param address セルのアドレス（"A1"..）
      * @param value セルの値（空セルの場合は {@code null} ではなく {@code ""}）
-     * @return 新しいオブジェクト
+     * @return 新しい {@link CellReplica} オブジェクト
      * @throws NullPointerException {@code address}, {@code value} のいずれかが {@code null} の場合
      * @throws IllegalArgumentException {@code address} の値が不正な場合
      */
@@ -71,16 +71,28 @@ public class CellReplica {
      * 
      * @param columnName 列名（"A"..）
      * @return 列インデックス（0..）
+     * @throws NullPointerException {@code columnName} が {@code null} の場合
+     * @throws IllegalArgumentException {@code columnName} の値が不正な場合
+     * 
+     * @since 0.3.1
      */
-    private static int getColumnIdx(String columnName) {
-        assert columnName != null;
-        
-        int idx = 0;
-        for (int i = 0; i < columnName.length(); i++) {
-            idx *= NUM;
-            idx += (columnName.charAt(i) - 'A' + 1);
+    public static int getColumnIdx(String columnName) {
+        Objects.requireNonNull(columnName, "columnName");
+        if (columnName.isEmpty()) {
+            throw new IllegalArgumentException("columnName: " + columnName);
         }
-        return idx - 1;
+        
+        try {
+            int idx = 0;
+            for (int i = 0; i < columnName.length(); i++) {
+                idx *= NUM;
+                idx += (columnName.charAt(i) - 'A' + 1);
+            }
+            return idx - 1;
+            
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException("columnName: " + columnName);
+        }
     }
     
     /**

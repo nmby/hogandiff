@@ -1,6 +1,7 @@
 package xyz.hotchpotch.hogandiff.excel;
 
 import java.io.File;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,8 +10,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import xyz.hotchpotch.hogandiff.common.Pair;
+import xyz.hotchpotch.hogandiff.common.Pair.Side;
 
 /**
  * Excelブック同士の比較結果を表す不変クラスです。<br>
@@ -79,6 +82,26 @@ public class BResult {
         // 不変にするため、防御的コピーしたうえで変更不可コレクションでラップする。
         this.sheetNamePairs = Collections.unmodifiableList(new ArrayList<>(sheetNamePairs));
         this.sResults = Collections.unmodifiableMap(new HashMap<>(sResults));
+    }
+    
+    /**
+     *  指定されたファイルのシート名と差分箇所のリストを返します。<br>
+     *  
+     * @param book 対象のExcelファイル
+     * @return シート名と差分箇所のリスト
+     * @throws NullPointerException {@code book} が {@code null} の場合
+     * @since 0.3.1
+     */
+    public List<Map.Entry<String, SResult.Piece>> getResults(File book) {
+        Objects.requireNonNull(book);
+        return Stream.of(Side.values())
+                .filter(side -> files.get(side).equals(book))
+                .flatMap(side -> sheetNamePairs.stream()
+                        .filter(Pair::isPaired)
+                        .map(p -> new AbstractMap.SimpleEntry<>(
+                                p.get(side),
+                                sResults.get(p).pieces.get(side))))
+                .collect(Collectors.toList());
     }
     
     @Override

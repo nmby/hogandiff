@@ -58,6 +58,7 @@ public class Pair<T> {
      * @param b 要素b
      * @return 要素aと要素bのペアを表す {@code Pair} オブジェクト
      * @throws NullPointerException {@code a}, {@code b} のいずれかが {@code null} の場合
+     * @see Optional#of(Object)
      */
     public static <T> Pair<T> of(T a, T b) {
         Objects.requireNonNull(a, "a");
@@ -72,6 +73,7 @@ public class Pair<T> {
      * @param a 要素a
      * @param b 要素b
      * @return 要素aと要素bのペアを表す {@code Pair} オブジェクト
+     * @see Optional#ofNullable(Object)
      */
     public static <T> Pair<T> ofNullable(T a, T b) {
         return new Pair<>(a, b);
@@ -107,6 +109,7 @@ public class Pair<T> {
      * 要素a, 要素bがともに {@code null} である空の {@link Pair} オブジェクトを生成して返します。<br>
      * @param <T> 要素の型
      * @return 要素a, 要素bがともに {@code null} である空の {@link Pair} オブジェクト
+     * @see Optional#empty()
      */
     public static <T> Pair<T> empty() {
         return new Pair<>(null, null);
@@ -142,6 +145,7 @@ public class Pair<T> {
      * 
      * @return 要素aの非null値
      * @throws NoSuchElementException 要素aが値を保持しない場合
+     * @see Optional#get()
      */
     public T a() {
         return a.get();
@@ -152,6 +156,7 @@ public class Pair<T> {
      * 
      * @param other 要素aが値を保持しない場合に返す値（nullも可）
      * @return 要素aの値（存在する場合）、それ以外の場合はother
+     * @see Optional#orElse(Object)
      */
     public T aOrElse(T other) {
         return a.orElse(other);
@@ -162,6 +167,7 @@ public class Pair<T> {
      * 
      * @return 要素bの非null値
      * @throws NoSuchElementException 要素bが値を保持しない場合
+     * @see Optional#get()
      */
     public T b() {
         return b.get();
@@ -172,6 +178,7 @@ public class Pair<T> {
      * 
      * @param other 要素bが値を保持しない場合に返す値（nullも可）
      * @return 要素bの値（存在する場合）、それ以外の場合はother
+     * @see Optional#orElse(Object)
      */
     public T bOrElse(T other) {
         return b.orElse(other);
@@ -184,6 +191,7 @@ public class Pair<T> {
      * @return 指定された側の要素の非null値
      * @throws NoSuchElementException 指定された側の要素が値を保持しない場合
      * @throws NullPointerException {@code side} が {@code null} の場合
+     * @see Optional#get()
      */
     public T get(Side side) {
         Objects.requireNonNull(side, "side");
@@ -243,6 +251,7 @@ public class Pair<T> {
      * 要素aが非null値を保持する場合は {@code true}, それ以外の場合は {@code false} を返します。<br>
      * 
      * @return 要素aが非null値を保持する場合は {@code true}
+     * @see Optional#isPresent()
      */
     public boolean isPresentA() {
         return a.isPresent();
@@ -252,6 +261,7 @@ public class Pair<T> {
      * 要素bが非null値を保持する場合は {@code true}, それ以外の場合は {@code false} を返します。<br>
      * 
      * @return 要素bが非null値を保持する場合は {@code true}
+     * @see Optional#isPresent()
      */
     public boolean isPresentB() {
         return b.isPresent();
@@ -263,6 +273,7 @@ public class Pair<T> {
      * @param side 要素の側
      * @return 指定された側の要素が非null値を保持する場合は {@code true}
      * @throws NullPointerException {@code side} が {@code null} の場合
+     * @see Optional#isPresent()
      */
     public boolean isPresent(Side side) {
         Objects.requireNonNull(side, "side");
@@ -277,6 +288,7 @@ public class Pair<T> {
      * @param mapper 変換関数
      * @return 変換後の要素を保持する {@link Pair} オブジェクト
      * @throws NullPointerException {@code mapper} が {@code null} の場合
+     * @see Optional#map(Function)
      */
     public <U> Pair<U> map(Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper, "mapper");
@@ -291,6 +303,7 @@ public class Pair<T> {
      * @param mapper 変換関数
      * @return 変換後の要素を保持する {@link Pair} オブジェクト
      * @throws NullPointerException {@code mapper} が {@code null} の場合
+     * @see Optional#flatMap(Function)
      */
     public <U> Pair<U> flatMap(Function<? super T, Optional<U>> mapper) {
         Objects.requireNonNull(mapper, "mapper");

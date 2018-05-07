@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,9 +21,6 @@ import xyz.hotchpotch.hogandiff.ApplicationException;
 import xyz.hotchpotch.hogandiff.Context;
 import xyz.hotchpotch.hogandiff.Context.Props;
 import xyz.hotchpotch.hogandiff.common.BookType;
-import xyz.hotchpotch.hogandiff.common.Pair;
-import xyz.hotchpotch.hogandiff.common.Pair.Side;
-import xyz.hotchpotch.hogandiff.excel.BResult;
 import xyz.hotchpotch.hogandiff.excel.SResult;
 
 /**
@@ -80,22 +79,20 @@ import xyz.hotchpotch.hogandiff.excel.SResult;
     /**
      * {@inheritDoc}
      * 
-     * @throws NullPointerException {@code src}, {@code dst}, {@code bResult}, {@code sides}
-     *                              のいずれかが {@code null} の場合
+     * @throws NullPointerException
+     *          {@code src}, {@code dst}, {@code result} のいずれかが {@code null} の場合
      * @throws IllegalArgumentException {@code src} のファイル形式がこのクラスのサポート対象外の場合
      */
     @Override
     public void paintAndSave(
             File book,
             Path copy,
-            BResult bResult,
-            Side... sides)
+            List<Map.Entry<String, SResult.Piece>> results)
             throws ApplicationException {
         
         Objects.requireNonNull(book, "book");
         Objects.requireNonNull(copy, "copy");
-        Objects.requireNonNull(bResult, "bResult");
-        Objects.requireNonNull(sides, "sides");
+        Objects.requireNonNull(results, "results");
         if (!isSupported(book)) {
             throw new IllegalArgumentException(book.getPath());
         }
@@ -116,15 +113,11 @@ import xyz.hotchpotch.hogandiff.excel.SResult;
             
             // 3. 色を付ける。
             POIUtils.clearColors(wb);
-            bResult.sheetNamePairs.stream()
-                    .filter(Pair::isPaired)
-                    .forEach(p -> {
-                        SResult sResult = bResult.sResults.get(p);
-                        for (Pair.Side side : sides) {
-                            Sheet sheet = wb.getSheet(p.get(side));
-                            paintSheet(sheet, sResult.pieces.get(side));
-                        }
-                    });
+            for (Map.Entry<String, SResult.Piece> result : results) {
+                String sheetName = result.getKey();
+                SResult.Piece piece = result.getValue();
+                paintSheet(wb.getSheet(sheetName), piece);
+            }
             
             // 4. 着色したExcelブックをコピーしたファイルに上書き保存する。
             try (OutputStream os = Files.newOutputStream(copy)) {

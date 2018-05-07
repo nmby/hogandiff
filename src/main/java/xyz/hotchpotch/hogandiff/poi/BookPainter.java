@@ -2,17 +2,17 @@ package xyz.hotchpotch.hogandiff.poi;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import xyz.hotchpotch.hogandiff.ApplicationException;
 import xyz.hotchpotch.hogandiff.Context;
-import xyz.hotchpotch.hogandiff.common.Pair;
-import xyz.hotchpotch.hogandiff.excel.BResult;
+import xyz.hotchpotch.hogandiff.excel.SResult;
 
 /**
  * Excelブックの差分箇所に色を付けるペインターを表します。<br>
- * これは、{@link #paintAndSave(File, Path, BResult, xyz.hotchpotch.hogandiff.common.Pair.Side...)}
- * を関数メソッドに持つ関数型インタフェースです。<br>
+ * これは、{@link #paintAndSave(File, Path, List)} を関数メソッドに持つ関数型インタフェースです。<br>
  * 
  * @author nmby
  * @since 0.3.1
@@ -48,14 +48,12 @@ public interface BookPainter {
      * 
      * @param book 処理対象Excelブックのファイルパス
      * @param copy 保存先ファイルパス
-     * @param bResult 比較結果
-     * @param sides 処理対象の側
+     * @param results シート名とその差分箇所のリスト
      * @throws ApplicationException 処理に失敗した場合
      */
     void paintAndSave(
             File book,
             Path copy,
-            BResult bResult,
-            Pair.Side... sides)
+            List<Map.Entry<String, SResult.Piece>> results)
             throws ApplicationException;
 }

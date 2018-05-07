@@ -306,13 +306,14 @@ public class MenuTask extends Task<Path> {
         try {
             updateProgress(progressBefore, PROGRESS_MAX);
             int total = progressAfter - progressBefore;
+            Pair<String> sheetPair = bResult.sheetNamePairs.get(0);
             
             str.append("Excelブックに比較結果の色を付けて保存しています...").append(BR);
             updateMessage(str.toString());
             File file = context.get(Props.CURR_FILE1);
             Path copy = workDir.resolve(file.getName());
             BookPainter painter = BookPainter.of(file, context);
-            painter.paintAndSave(file, copy, bResult, Pair.Side.A, Pair.Side.B);
+            painter.paintAndSave(file, copy, bResult.getResults(file));
             str.append(String.format("  - %s\n\n", copy.toString()));
             updateMessage(str.toString());
             updateProgress(progressBefore + total * 4 / 5, PROGRESS_MAX);
@@ -359,7 +360,7 @@ public class MenuTask extends Task<Path> {
             File file1 = context.get(Props.CURR_FILE1);
             Path copy1 = workDir.resolve("【A】" + file1.getName());
             BookPainter painter1 = BookPainter.of(file1, context);
-            painter1.paintAndSave(file1, copy1, bResult, Pair.Side.A);
+            painter1.paintAndSave(file1, copy1, bResult.getResults(file1));
             str.append(String.format("  - %s\n\n", copy1.toString()));
             updateMessage(str.toString());
             updateProgress(progressBefore + total * 2 / 5, PROGRESS_MAX);
@@ -369,7 +370,7 @@ public class MenuTask extends Task<Path> {
             File file2 = context.get(Props.CURR_FILE2);
             Path copy2 = workDir.resolve("【B】" + file2.getName());
             BookPainter painter2 = BookPainter.of(file2, context);
-            painter2.paintAndSave(file2, copy2, bResult, Pair.Side.B);
+            painter2.paintAndSave(file2, copy2, bResult.getResults(file2));
             str.append(String.format("  - %s\n\n", copy2.toString()));
             updateMessage(str.toString());
             updateProgress(progressBefore + total * 4 / 5, PROGRESS_MAX);

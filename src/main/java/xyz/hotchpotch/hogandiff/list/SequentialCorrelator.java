@@ -146,6 +146,9 @@ import xyz.hotchpotch.hogandiff.common.Pair;
             accumulatedCosts[0][j] = accumulatedCosts[0][j - 1] + costs[0][j];
             bestDirections[0][j] = ComeFrom.LEFT;
         }
+        // 比較対象リストが長くなるほど、すなわち二次元比較マップ（探索平面）が広くなるほど
+        // 処理の並列化が効果を発揮すると信じて、処理を並列化する。
+        // 縦方向、横方向には並列化できないため、探索平面を斜めにスライスして処理を並列化する。
         for (int n = 2; n < costs.length + costs[0].length - 1; n++) {
             final int nn = n;
             IntStream.rangeClosed(Math.max(1, nn - costs[0].length + 1), Math.min(nn - 1, costs.length - 1))
