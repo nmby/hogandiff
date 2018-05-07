@@ -67,26 +67,32 @@ import xyz.hotchpotch.hogandiff.common.Pair;
         List<Pair<Integer>> columnPairs = columnStrategy.pairing(cellsA, cellsB);
         
         // 余剰行を収集する。
-        List<Integer> redundantRowsA = considerRowGaps
-                ? rowPairs.stream().filter(Pair::isOnlyA).map(p -> p.a()).collect(Collectors.toList())
-                : null;
-        List<Integer> redundantRowsB = considerRowGaps
-                ? rowPairs.stream().filter(Pair::isOnlyB).map(p -> p.b()).collect(Collectors.toList())
-                : null;
+        List<Integer> redundantRowsA = rowPairs.stream()
+                .filter(Pair::isOnlyA)
+                .map(Pair::a)
+                .collect(Collectors.toList());
+        List<Integer> redundantRowsB = rowPairs.stream()
+                .filter(Pair::isOnlyB)
+                .map(Pair::b)
+                .collect(Collectors.toList());
         
         // 余剰列を収集する。
-        List<Integer> redundantColumnsA = considerColumnGaps
-                ? columnPairs.stream().filter(Pair::isOnlyA).map(p -> p.a()).collect(Collectors.toList())
-                : null;
-        List<Integer> redundantColumnsB = considerColumnGaps
-                ? columnPairs.stream().filter(Pair::isOnlyB).map(p -> p.b()).collect(Collectors.toList())
-                : null;
+        List<Integer> redundantColumnsA = columnPairs.stream()
+                .filter(Pair::isOnlyA)
+                .map(Pair::a)
+                .collect(Collectors.toList());
+        List<Integer> redundantColumnsB = columnPairs.stream()
+                .filter(Pair::isOnlyB)
+                .map(Pair::b)
+                .collect(Collectors.toList());
         
         // 差分セルを収集する。
         List<Pair<CellReplica>> diffCells = compareCells(
                 cellsA, cellsB, rowPairs, columnPairs);
         
         return SResult.of(
+                considerRowGaps,
+                considerColumnGaps,
                 redundantRowsA,
                 redundantRowsB,
                 redundantColumnsA,
