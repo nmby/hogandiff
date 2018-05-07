@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -123,7 +122,7 @@ import xyz.hotchpotch.hogandiff.excel.SResult;
                         SResult sResult = bResult.sResults.get(p);
                         for (Pair.Side side : sides) {
                             Sheet sheet = wb.getSheet(p.get(side));
-                            paintSheet(sheet, sResult, side);
+                            paintSheet(sheet, sResult.pieces.get(side));
                         }
                     });
             
@@ -143,26 +142,15 @@ import xyz.hotchpotch.hogandiff.excel.SResult;
      * 指定されたシートに比較結果の色を付けます。<br>
      * 
      * @param sheet 対象のシート
-     * @param sResult シート同士の比較結果
-     * @param side 対象シートの側
+     * @param piece 対象シート上の差分箇所
      */
-    private void paintSheet(Sheet sheet, SResult sResult, Pair.Side side) {
+    private void paintSheet(Sheet sheet, SResult.Piece piece) {
         assert sheet != null;
-        assert sResult != null;
-        assert side != null;
+        assert piece != null;
         
-        sResult.redundantRows.ifPresent(p -> {
-            List<Integer> rows = p.get(side);
-            POIUtils.paintRows(sheet, rows, redundantColor);
-        });
-        
-        sResult.redundantColumns.ifPresent(p -> {
-            List<Integer> columns = p.get(side);
-            POIUtils.paintColumns(sheet, columns, redundantColor);
-        });
-        
-        Set<CellAddress> addresses = sResult.diffCells.stream()
-                .map(p -> p.get(side))
+        POIUtils.paintRows(sheet, piece.redundantRows, redundantColor);
+        POIUtils.paintColumns(sheet, piece.redundantColumns, redundantColor);
+        Set<CellAddress> addresses = piece.diffCells.stream()
                 .map(cell -> new CellAddress(cell.row(), cell.column()))
                 .collect(Collectors.toSet());
         POIUtils.paintCells(sheet, addresses, diffColor);

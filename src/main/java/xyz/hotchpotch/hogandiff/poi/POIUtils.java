@@ -317,6 +317,10 @@ public class POIUtils {
         Objects.requireNonNull(sheet, "sheet");
         Objects.requireNonNull(rows, "rows");
         
+        if (rows.isEmpty()) {
+            return;
+        }
+        
         CellStyle newStyle = sheet.getWorkbook().createCellStyle();
         newStyle.setFillForegroundColor(color);
         newStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
@@ -351,6 +355,10 @@ public class POIUtils {
         Objects.requireNonNull(sheet, "sheet");
         Objects.requireNonNull(columns, "columns");
         
+        if (columns.isEmpty()) {
+            return;
+        }
+        
         CellStyle newStyle = sheet.getWorkbook().createCellStyle();
         newStyle.setFillForegroundColor(color);
         newStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
@@ -380,6 +388,10 @@ public class POIUtils {
     public static void paintCells(Sheet sheet, Collection<CellAddress> addresses, short color) {
         Objects.requireNonNull(sheet, "sheet");
         Objects.requireNonNull(addresses, "addresses");
+        
+        if (addresses.isEmpty()) {
+            return;
+        }
         
         // 指定された位置の行・セルが存在しない場合は、色を付けるために行・セルを作成する。
         addresses.forEach(address -> {

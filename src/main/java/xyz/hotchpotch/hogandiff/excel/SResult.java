@@ -72,7 +72,7 @@ public class SResult {
      * @param redundantColumnsB シートB上の余剰列インデックスのリスト（列の挿入／削除を考慮しなかった場合は {@code null}）
      * @param diffCells 差分セルを表すペアのリスト
      * @return 新しい {@link SResult} オブジェクト
-     * @throws NullPointerException {@code diffCells} が {@code null} の場合
+     * @throws NullPointerException {@code diffCells} のいずれかが {@code null} の場合
      * @throws IllegalArgumentException
      *      {@code redundantRowsA}, {@code redundantRowsB} の一方のみが {@code null} の場合や、
      *      {@code redundantColumnsA}, {@code redundantColumnsB} の一方のみが {@code null} の場合
@@ -116,9 +116,11 @@ public class SResult {
     public final List<Pair<CellReplica>> diffCells;
     
     /** 比較において行の余剰/欠損を考慮した場合は {@code true} */
+    @Deprecated
     public final boolean considerRowGaps;
     
     /** 比較において列の余剰/欠損を考慮した場合は {@code true} */
+    @Deprecated
     public final boolean considerColumnGaps;
     
     /** 各シートの差分箇所 */
