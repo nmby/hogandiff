@@ -1,6 +1,7 @@
 package xyz.hotchpotch.hogandiff.excel;
 
 import java.io.File;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,8 +10,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import xyz.hotchpotch.hogandiff.common.Pair;
+import xyz.hotchpotch.hogandiff.common.Pair.Side;
 
 /**
  * Excelブック同士の比較結果を表す不変クラスです。<br>
@@ -81,12 +84,32 @@ public class BResult {
         this.sResults = Collections.unmodifiableMap(new HashMap<>(sResults));
     }
     
+    /**
+     *  指定されたファイルのシート名と差分箇所のリストを返します。<br>
+     *  
+     * @param book 対象のExcelファイル
+     * @return シート名と差分箇所のリスト
+     * @throws NullPointerException {@code book} が {@code null} の場合
+     * @since 0.3.1
+     */
+    public List<Map.Entry<String, SResult.Piece>> getResults(File book) {
+        Objects.requireNonNull(book);
+        return Stream.of(Side.values())
+                .filter(side -> files.get(side).equals(book))
+                .flatMap(side -> sheetNamePairs.stream()
+                        .filter(Pair::isPaired)
+                        .map(p -> new AbstractMap.SimpleEntry<>(
+                                p.get(side),
+                                sResults.get(p).pieces.get(side))))
+                .collect(Collectors.toList());
+    }
+    
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
         
-        str.append("ブックA : ").append(files.a().get().getPath()).append(BR);
-        str.append("ブックB : ").append(files.b().get().getPath()).append(BR);
+        str.append("ブックA : ").append(files.a().getPath()).append(BR);
+        str.append("ブックB : ").append(files.b().getPath()).append(BR);
         str.append(BR);
         
         str.append("■サマリ========================================================================").append(BR);
@@ -120,8 +143,8 @@ public class BResult {
     private String getResult(Function<SResult, String> recorder) {
         return sheetNamePairs.stream().map(p -> {
             StringBuilder str = new StringBuilder();
-            str.append("シートA : ").append(p.a().orElse("（なし）")).append(BR);
-            str.append("シートB : ").append(p.b().orElse("（なし）")).append(BR);
+            str.append("シートA : ").append(p.aOrElse("（なし）")).append(BR);
+            str.append("シートB : ").append(p.bOrElse("（なし）")).append(BR);
             
             if (p.isPaired()) {
                 str.append(recorder.apply(sResults.get(p)));

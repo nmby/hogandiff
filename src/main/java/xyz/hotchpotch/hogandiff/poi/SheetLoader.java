@@ -1,6 +1,7 @@
 package xyz.hotchpotch.hogandiff.poi;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.Set;
 
 import xyz.hotchpotch.hogandiff.ApplicationException;
@@ -25,8 +26,11 @@ public interface SheetLoader {
      * @param extractCachedValue 数式セルから数式文字列ではなくキャッシュされた計算値を取得する場合は {@code true}
      * @return 指定されたExcelブックに適したローダー
      * @throws UnsupportedOperationException 指定されたExcelブックに適合するローダーが無い場合
+     * @throws NullPointerException {@code book} が {@code null} の場合
      */
     public static SheetLoader of(File book, boolean extractCachedValue) {
+        Objects.requireNonNull(book, "book");
+        
         if (XSSFSheetLoaderWithEventApi.isSupported(book)) {
             return XSSFSheetLoaderWithEventApi.of(extractCachedValue);
         }

@@ -3,6 +3,7 @@ package xyz.hotchpotch.hogandiff.excel;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -67,26 +68,32 @@ import xyz.hotchpotch.hogandiff.common.Pair;
         List<Pair<Integer>> columnPairs = columnStrategy.pairing(cellsA, cellsB);
         
         // 余剰行を収集する。
-        List<Integer> redundantRowsA = considerRowGaps
-                ? rowPairs.stream().filter(Pair::isOnlyA).map(p -> p.a().get()).collect(Collectors.toList())
-                : null;
-        List<Integer> redundantRowsB = considerRowGaps
-                ? rowPairs.stream().filter(Pair::isOnlyB).map(p -> p.b().get()).collect(Collectors.toList())
-                : null;
+        List<Integer> redundantRowsA = rowPairs.stream()
+                .filter(Pair::isOnlyA)
+                .map(Pair::a)
+                .collect(Collectors.toList());
+        List<Integer> redundantRowsB = rowPairs.stream()
+                .filter(Pair::isOnlyB)
+                .map(Pair::b)
+                .collect(Collectors.toList());
         
         // 余剰列を収集する。
-        List<Integer> redundantColumnsA = considerColumnGaps
-                ? columnPairs.stream().filter(Pair::isOnlyA).map(p -> p.a().get()).collect(Collectors.toList())
-                : null;
-        List<Integer> redundantColumnsB = considerColumnGaps
-                ? columnPairs.stream().filter(Pair::isOnlyB).map(p -> p.b().get()).collect(Collectors.toList())
-                : null;
+        List<Integer> redundantColumnsA = columnPairs.stream()
+                .filter(Pair::isOnlyA)
+                .map(Pair::a)
+                .collect(Collectors.toList());
+        List<Integer> redundantColumnsB = columnPairs.stream()
+                .filter(Pair::isOnlyB)
+                .map(Pair::b)
+                .collect(Collectors.toList());
         
         // 差分セルを収集する。
         List<Pair<CellReplica>> diffCells = compareCells(
                 cellsA, cellsB, rowPairs, columnPairs);
         
         return SResult.of(
+                considerRowGaps,
+                considerColumnGaps,
                 redundantRowsA,
                 redundantRowsB,
                 redundantColumnsA,
@@ -120,12 +127,12 @@ import xyz.hotchpotch.hogandiff.common.Pair;
                 .collect(Collectors.toMap(CellReplica::address, Function.identity()));
         
         return rowPairs.parallelStream().filter(Pair::isPaired).flatMap(rp -> {
-            int rowA = rp.a().get();
-            int rowB = rp.b().get();
+            int rowA = rp.a();
+            int rowB = rp.b();
             
-            return columnPairs.parallelStream().filter(Pair::isPaired).map(cp -> {
-                int columnA = cp.a().get();
-                int columnB = cp.b().get();
+            return columnPairs.stream().filter(Pair::isPaired).map(cp -> {
+                int columnA = cp.a();
+                int columnB = cp.b();
                 String addrA = CellReplica.getAddress(rowA, columnA);
                 String addrB = CellReplica.getAddress(rowB, columnB);
                 CellReplica cellA = mapA.get(addrA);
@@ -136,8 +143,8 @@ import xyz.hotchpotch.hogandiff.common.Pair;
                 return valueA.equals(valueB)
                         ? null
                         : Pair.of(
-                                cellA == null ? CellReplica.of(addrA, "") : cellA,
-                                cellB == null ? CellReplica.of(addrB, "") : cellB);
+                                Optional.ofNullable(cellA).orElseGet(() -> CellReplica.of(addrA, "")),
+                                Optional.ofNullable(cellB).orElseGet(() -> CellReplica.of(addrB, "")));
             });
         }).filter(p -> p != null).collect(Collectors.toList());
     }
