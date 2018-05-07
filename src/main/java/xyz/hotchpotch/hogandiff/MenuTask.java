@@ -306,7 +306,6 @@ public class MenuTask extends Task<Path> {
         try {
             updateProgress(progressBefore, PROGRESS_MAX);
             int total = progressAfter - progressBefore;
-            Pair<String> sheetPair = bResult.sheetNamePairs.get(0);
             
             str.append("Excelブックに比較結果の色を付けて保存しています...").append(BR);
             updateMessage(str.toString());
