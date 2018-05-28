@@ -12,7 +12,7 @@ import xyz.hotchpotch.hogandiff.excel.xssf.XSSFSheetListerWithEventApi;
  * これは、{@link #getSheetNames(File)} を関数メソッドに持つ関数型インタフェースです。<br>
  * 
  * @author nmby
- * @since 0.1.0
+ * @since 0.3.2
  */
 @FunctionalInterface
 public interface SheetLister {

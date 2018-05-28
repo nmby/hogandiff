@@ -75,8 +75,6 @@ public class ExcelUtils {
      * @return セルの格納値を表す文字列
      * @throws NullPointerException {@code cell} が {@code null} の場合
      * @throws IllegalStateException {@code cell} が未初期化状態の場合
-     * 
-     * @since 0.2.0
      */
     public static String getValue(Cell cell, boolean returnCachedValue) {
         Objects.requireNonNull(cell, "cell");

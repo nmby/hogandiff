@@ -9,7 +9,7 @@ import java.util.stream.Stream;
  * Excelブックの形式を表す列挙型です。<br>
  * 
  * @author nmby
- * @since 0.1.0
+ * @since 0.3.2
  */
 public enum BookType {
     

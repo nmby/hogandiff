@@ -30,7 +30,7 @@ import xyz.hotchpotch.hogandiff.excel.SheetLoader;
  * {@link SheetLoader} の実装です。<br>
  * 
  * @author nmby
- * @since 0.1.0
+ * @since 0.3.2
  */
 public class XSSFSheetLoaderWithEventApi implements SheetLoader {
     
@@ -40,7 +40,7 @@ public class XSSFSheetLoaderWithEventApi implements SheetLoader {
      * セルタイプを表す列挙型です。<br>
      * 
      * @author nmby
-     * @since 0.1.0
+     * @since 0.3.2
      * @see <a href="http://officeopenxml.com/SScontentOverview.php">http://officeopenxml.com/SScontentOverview.php</a>
      */
     private static enum CellType {

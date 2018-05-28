@@ -27,7 +27,7 @@ import xyz.hotchpotch.hogandiff.diff.excel.SResult;
  * {@link BookPainter} の実装です。<br>
  * 
  * @author nmby
- * @since 0.3.1
+ * @since 0.3.2
  */
 /*package*/ class BookPainterWithUserApi implements BookPainter {
     

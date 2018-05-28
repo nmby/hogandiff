@@ -18,7 +18,7 @@ import xyz.hotchpotch.hogandiff.excel.CellReplica;
  * 2つの比較対象Excelシートの行方向、列方向の対応関係をそれぞれ別々に求めたうえでセルの比較を行います。<br>
  * 
  * @author nmby
- * @since 0.1.0
+ * @since 0.3.2
  */
 /*package*/ class SComparatorImpl1 implements SComparator {
     

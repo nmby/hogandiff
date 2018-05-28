@@ -13,7 +13,7 @@ import xyz.hotchpotch.hogandiff.common.Pair;
  * これは、{@link #correlate(List, List)} を関数メソッドに持つ関数型インタフェースです。<br>
  * 
  * @param <T> 比較対象リストの要素の型
- * @since 0.1.0
+ * @since 0.3.2
  * @author nmby
  */
 @FunctionalInterface

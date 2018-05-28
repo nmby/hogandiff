@@ -6,7 +6,7 @@ import java.util.Objects;
  * セルを表す簡易な不変クラスです。<br>
  * 
  * @author nmby
- * @since 0.1.0
+ * @since 0.3.2
  */
 public class CellReplica {
     
@@ -73,8 +73,6 @@ public class CellReplica {
      * @return 列インデックス（0..）
      * @throws NullPointerException {@code columnName} が {@code null} の場合
      * @throws IllegalArgumentException {@code columnName} の値が不正な場合
-     * 
-     * @since 0.3.1
      */
     public static int getColumnIdx(String columnName) {
         Objects.requireNonNull(columnName, "columnName");

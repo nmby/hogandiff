@@ -14,7 +14,7 @@ import xyz.hotchpotch.hogandiff.excel.CellReplica;
  * Excelシート同士の比較結果を表す不変クラスです。<br>
  * 
  * @author nmby
- * @since 0.1.0
+ * @since 0.3.2
  */
 public class SResult {
     
@@ -24,7 +24,7 @@ public class SResult {
      * 2つのExcelシートの比較結果のうち、一方のシートの差分箇所を表す不変クラスです。<br>
      * 
      * @author nmby
-     * @since 0.3.1
+     * @since 0.3.2
      */
     public static class Piece {
         

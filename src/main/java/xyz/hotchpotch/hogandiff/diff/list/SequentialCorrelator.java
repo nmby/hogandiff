@@ -15,7 +15,7 @@ import xyz.hotchpotch.hogandiff.common.Pair;
  * 
  * @param <T> 比較対象要素の型
  * @author nmby
- * @since 0.1.0
+ * @since 0.3.2
  */
 /*package*/ class SequentialCorrelator<T> implements Correlator<T> {
     
@@ -25,7 +25,7 @@ import xyz.hotchpotch.hogandiff.common.Pair;
      * 内部処理用の列挙型です。
      * リストA、リストBの二次元比較マップ上の各格子点における最適遷移方向を表します。<br>
      * 
-     * @since 0.1.0
+     * @since 0.3.2
      * @author nmby
      */
     private static enum ComeFrom {

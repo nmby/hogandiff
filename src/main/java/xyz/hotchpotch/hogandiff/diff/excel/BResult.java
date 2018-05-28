@@ -19,7 +19,7 @@ import xyz.hotchpotch.hogandiff.common.Pair.Side;
  * Excelブック同士の比較結果を表す不変クラスです。<br>
  * 
  * @author nmby
- * @since 0.1.0
+ * @since 0.3.2
  */
 public class BResult {
     

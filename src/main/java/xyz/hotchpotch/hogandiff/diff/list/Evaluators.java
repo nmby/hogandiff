@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
  * {@link Correlator} と組み合わせて利用するための典型的な各種評価関数を集めたユーティリティクラスです。<br>
  * 
  * @author nmby
- * @since 0.1.0
+ * @since 0.3.2
  */
 public class Evaluators {
     

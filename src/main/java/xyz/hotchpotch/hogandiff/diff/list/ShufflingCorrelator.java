@@ -18,7 +18,7 @@ import xyz.hotchpotch.hogandiff.common.Pair;
  * 
  * @param <T> 比較対象要素の型
  * @author nmby
- * @since 0.1.0
+ * @since 0.3.2
  */
 /*package*/ class ShufflingCorrelator<T> implements Correlator<T> {
     
@@ -28,7 +28,7 @@ import xyz.hotchpotch.hogandiff.common.Pair;
      * 要素同士の差分コストもしくは要素単独の余剰コストを保持する、内部計算用のクラスです。<br>
      * 
      * @author nmby
-     * @since 0.1.0
+     * @since 0.3.2
      */
     private static class Cost implements Comparable<Cost> {
         

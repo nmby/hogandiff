@@ -20,7 +20,7 @@ import xyz.hotchpotch.hogandiff.ApplicationException;
  * {@link SheetLoader} の実装です。<br>
  * 
  * @author nmby
- * @since 0.2.0
+ * @since 0.3.2
  */
 /*package*/class SheetLoaderWithUserApi implements SheetLoader {
     

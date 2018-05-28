@@ -20,7 +20,7 @@ import xyz.hotchpotch.hogandiff.excel.CellReplica;
  * {@link SStrategy} の標準的な実装を提供するユーティリティクラスです。<br>
  * 
  * @author nmby
- * @since 0.1.0
+ * @since 0.3.2
  */
 /*package*/ class SStrategies {
     

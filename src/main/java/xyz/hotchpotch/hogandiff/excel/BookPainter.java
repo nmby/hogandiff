@@ -15,7 +15,7 @@ import xyz.hotchpotch.hogandiff.diff.excel.SResult;
  * これは、{@link #paintAndSave(File, Path, List)} を関数メソッドに持つ関数型インタフェースです。<br>
  * 
  * @author nmby
- * @since 0.3.1
+ * @since 0.3.2
  */
 @FunctionalInterface
 public interface BookPainter {

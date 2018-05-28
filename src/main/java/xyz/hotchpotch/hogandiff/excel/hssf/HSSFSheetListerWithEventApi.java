@@ -27,7 +27,7 @@ import xyz.hotchpotch.hogandiff.excel.SheetLister;
  * {@link SheetLister} の実装です。<br>
  * 
  * @author nmby
- * @since 0.1.0
+ * @since 0.3.2
  */
 public class HSSFSheetListerWithEventApi implements SheetLister {
     
