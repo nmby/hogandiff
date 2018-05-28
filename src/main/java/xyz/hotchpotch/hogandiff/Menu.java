@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 
 import xyz.hotchpotch.hogandiff.Context.Props;
 import xyz.hotchpotch.hogandiff.common.Pair;
-import xyz.hotchpotch.hogandiff.list.Correlator;
-import xyz.hotchpotch.hogandiff.list.Evaluators;
-import xyz.hotchpotch.hogandiff.poi.POIUtils;
+import xyz.hotchpotch.hogandiff.diff.list.Correlator;
+import xyz.hotchpotch.hogandiff.diff.list.Evaluators;
+import xyz.hotchpotch.hogandiff.excel.ExcelUtils;
 
 /**
  * このアプリケーションの実行メニューを表す列挙型です。<br>
@@ -40,8 +40,8 @@ public enum Menu {
             
             File file1 = context.get(Props.CURR_FILE1);
             File file2 = context.get(Props.CURR_FILE2);
-            List<String> sheetNames1 = POIUtils.getSheetNames(file1);
-            List<String> sheetNames2 = POIUtils.getSheetNames(file2);
+            List<String> sheetNames1 = ExcelUtils.getSheetNames(file1);
+            List<String> sheetNames2 = ExcelUtils.getSheetNames(file2);
             
             Correlator<String> correlator = Correlator.withShuffling(
                     Evaluators.stringGapEvaluator,

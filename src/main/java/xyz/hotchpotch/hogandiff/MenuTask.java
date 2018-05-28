@@ -18,13 +18,13 @@ import java.util.stream.Collectors;
 
 import javafx.concurrent.Task;
 import xyz.hotchpotch.hogandiff.Context.Props;
-import xyz.hotchpotch.hogandiff.common.CellReplica;
 import xyz.hotchpotch.hogandiff.common.Pair;
-import xyz.hotchpotch.hogandiff.excel.BResult;
-import xyz.hotchpotch.hogandiff.excel.SComparator;
-import xyz.hotchpotch.hogandiff.excel.SResult;
-import xyz.hotchpotch.hogandiff.poi.BookPainter;
-import xyz.hotchpotch.hogandiff.poi.POIUtils;
+import xyz.hotchpotch.hogandiff.diff.excel.BResult;
+import xyz.hotchpotch.hogandiff.diff.excel.SComparator;
+import xyz.hotchpotch.hogandiff.diff.excel.SResult;
+import xyz.hotchpotch.hogandiff.excel.BookPainter;
+import xyz.hotchpotch.hogandiff.excel.CellReplica;
+import xyz.hotchpotch.hogandiff.excel.ExcelUtils;
 
 /**
  * {@link Menu} を実行するためのタスクです。<br>
@@ -230,8 +230,8 @@ public class MenuTask extends Task<Path> {
                         i, pairedPairs.size(), sheetName1, sheetName2));
                 updateMessage(str.toString());
                 
-                Set<CellReplica> cells1 = POIUtils.loadSheet(file1, sheetName1, extractCachedValue);
-                Set<CellReplica> cells2 = POIUtils.loadSheet(file2, sheetName2, extractCachedValue);
+                Set<CellReplica> cells1 = ExcelUtils.loadSheet(file1, sheetName1, extractCachedValue);
+                Set<CellReplica> cells2 = ExcelUtils.loadSheet(file2, sheetName2, extractCachedValue);
                 SResult sResult = comparator.compare(cells1, cells2);
                 sResults.put(pair, sResult);
                 
