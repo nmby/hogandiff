@@ -43,7 +43,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import xyz.hotchpotch.hogandiff.Context.Props;
-import xyz.hotchpotch.hogandiff.poi.POIUtils;
+import xyz.hotchpotch.hogandiff.excel.ExcelUtils;
 
 /**
  * このアプリケーションのメインコントローラです。<br>
@@ -264,7 +264,7 @@ public class MainAppController {
             return FXCollections.emptyObservableList();
         }
         try {
-            return FXCollections.observableList(POIUtils.getSheetNames(file));
+            return FXCollections.observableList(ExcelUtils.getSheetNames(file));
         } catch (Exception e) {
             return FXCollections.emptyObservableList();
         }
