@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
@@ -300,14 +299,8 @@ public class XSSFSheetLoaderWithEventApi implements SheetLoader {
             throw new IllegalArgumentException(book.getName());
         }
         
-        XSSFSheetListerWithEventApi lister = XSSFSheetListerWithEventApi.of();
-        Map<String, String> sheetsMap = lister.getSheetsId(book);
-        String relId = sheetsMap.get(sheetName);
-        if (relId == null) {
-            throw new NoSuchElementException(
-                    String.format("book: %s, relId: %s", book.getPath(), relId));
-        }
-        
+        XSSFSheetEntryManager manager = XSSFSheetEntryManager.generate(book.toPath());
+        String relId = manager.getIdByName(sheetName);
         return loadSheetById(book, relId);
     }
 }
