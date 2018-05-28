@@ -8,7 +8,6 @@ import static xyz.hotchpotch.hogandiff.excel.TestFiles.*;
 import org.junit.jupiter.api.Test;
 
 import xyz.hotchpotch.hogandiff.ApplicationException;
-import xyz.hotchpotch.hogandiff.excel.xssf.XSSFSheetListerWithEventApi;
 
 class XSSFSheetListerWithEventApiTest {
     
@@ -81,45 +80,5 @@ class XSSFSheetListerWithEventApiTest {
         assertThrows(
                 ApplicationException.class,
                 () -> lister.getSheetNames(SheetLister3_dummy_xlsx));
-    }
-    
-    @Test
-    void testGetSheetsId_パラメータ不正() {
-        assertThrows(
-                NullPointerException.class,
-                () -> lister.getSheetsId(null));
-        
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> lister.getSheetsId(SheetLister1_normal_xls));
-    }
-    
-    @Test
-    void testGetSheetsId_通常ケース() throws ApplicationException {
-        assertEquals(
-                sheetsId1,
-                lister.getSheetsId(SheetLister1_normal_xlsx));
-        
-        assertEquals(
-                sheetsId1,
-                lister.getSheetsId(SheetLister1_normal_xlsm));
-    }
-    
-    @Test
-    void testGetSheetsId_シート名バリエーション() throws ApplicationException {
-        assertEquals(
-                sheetsId2,
-                lister.getSheetsId(SheetLister2_namevariations_xlsx));
-        
-        assertEquals(
-                sheetsId2,
-                lister.getSheetsId(SheetLister2_namevariations_xlsm));
-    }
-    
-    @Test
-    void testGetSheetsId_拡張子偽装の不正な内容() throws ApplicationException {
-        assertThrows(
-                ApplicationException.class,
-                () -> lister.getSheetsId(SheetLister3_dummy_xlsx));
     }
 }
