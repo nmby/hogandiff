@@ -2,6 +2,8 @@ package xyz.hotchpotch.hogandiff.excel;
 
 import java.util.Objects;
 
+import xyz.hotchpotch.hogandiff.common.Pair;
+
 /**
  * セルを表す簡易な不変クラスです。<br>
  * 
@@ -74,7 +76,7 @@ public class CellReplica {
      * @throws NullPointerException {@code columnName} が {@code null} の場合
      * @throws IllegalArgumentException {@code columnName} の値が不正な場合
      */
-    public static int getColumnIdx(String columnName) {
+    private static int getColumnIdx(String columnName) {
         Objects.requireNonNull(columnName, "columnName");
         if (columnName.isEmpty()) {
             throw new IllegalArgumentException("columnName: " + columnName);
@@ -90,6 +92,40 @@ public class CellReplica {
             
         } catch (RuntimeException e) {
             throw new IllegalArgumentException("columnName: " + columnName);
+        }
+    }
+    
+    /**
+     * 指定されたセルアドレス（"A1"..）に対応する行インデックス（0開始）と列インデックス（0開始）のペアを返します。<br>
+     * 
+     * @param address セルのアドレス（"A1"..）
+     * @return 行インデックス（0開始）と列インデックス（0開始）のペア
+     * @throws NullPointerException {@code address} が {@code null} の場合
+     * @throws IllegalArgumentException {@code address} の値が不正な場合
+     * 
+     * @since 0.4.0
+     */
+    public static Pair<Integer> getIndex(String address) {
+        Objects.requireNonNull(address, "address");
+        
+        int i = 0;
+        while (i < address.length()) {
+            char c = address.charAt(i);
+            if (c < 'A' || 'Z' < c) {
+                break;
+            }
+            i++;
+        }
+        
+        try {
+            String columnName = address.substring(0, i);
+            String rowName = address.substring(i);
+            int row = Integer.parseInt(rowName) - 1;
+            int column = getColumnIdx(columnName);
+            return Pair.of(row, column);
+            
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException("address: " + address);
         }
     }
     
