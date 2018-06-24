@@ -29,7 +29,7 @@ public class Main extends Application {
     
     // [static members] ********************************************************
     
-    private static final String version = "v0.3.2";
+    private static final String version = "v0.4.0";
     private static final String APP_PROP_PATH = "hogandiff.properties";
     
     /**
