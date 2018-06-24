@@ -28,7 +28,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 
 import xyz.hotchpotch.hogandiff.ApplicationException;
 import xyz.hotchpotch.hogandiff.Context;
@@ -156,8 +155,8 @@ public class XSSFBookPainterWithStaxApi implements BookPainter {
                 OutputStream os = Files.newOutputStream(outFs.getPath("xl/sharedStrings.xml"),
                         StandardOpenOption.TRUNCATE_EXISTING)) {
             
-            XMLEventReader reader = inFactory.createXMLEventReader(is);
-            XMLEventWriter writer = outFactory.createXMLEventWriter(os);
+            XMLEventReader reader = inFactory.createXMLEventReader(is, "UTF-8");
+            XMLEventWriter writer = outFactory.createXMLEventWriter(os, "UTF-8");
             
             reader = FilteringReader.builder(reader)
                     .addFilter(QNAME.COLOR)
@@ -178,8 +177,8 @@ public class XSSFBookPainterWithStaxApi implements BookPainter {
                 OutputStream os = Files.newOutputStream(outFs.getPath("xl/styles.xml"),
                         StandardOpenOption.TRUNCATE_EXISTING)) {
             
-            XMLEventReader reader = inFactory.createXMLEventReader(is);
-            XMLEventWriter writer = outFactory.createXMLEventWriter(os);
+            XMLEventReader reader = inFactory.createXMLEventReader(is, "UTF-8");
+            XMLEventWriter writer = outFactory.createXMLEventWriter(os, "UTF-8");
             
             reader = FilteringReader.builder(reader)
                     .addFilter(QNAME.FONTS, QNAME.FONT, QNAME.COLOR)
@@ -217,10 +216,10 @@ public class XSSFBookPainterWithStaxApi implements BookPainter {
         try (// 注意：コピー先から読み込むため、outFsを使うので正しい。
                 InputStream is = Files.newInputStream(outFs.getPath("xl/styles.xml"))) {
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-            //styles = docBuilder.parse(is);
-            InputSource is2 = new InputSource(is);
-            is2.setEncoding("Shift_JIS");
-            styles = docBuilder.parse(is2);
+            styles = docBuilder.parse(is);
+            //InputSource is2 = new InputSource(is);
+            //is2.setEncoding("Shift_JIS");
+            //styles = docBuilder.parse(is2);
             stylesManager = StylesManager.of(styles);
         } catch (Exception e) {
             throw new ApplicationException("xl/styles.xml エントリの読み込みに失敗しました。", e);
@@ -257,8 +256,8 @@ public class XSSFBookPainterWithStaxApi implements BookPainter {
                 OutputStream os = Files.newOutputStream(outFs.getPath(source),
                         StandardOpenOption.TRUNCATE_EXISTING)) {
             
-            XMLEventReader reader = inFactory.createXMLEventReader(is);
-            XMLEventWriter writer = outFactory.createXMLEventWriter(os);
+            XMLEventReader reader = inFactory.createXMLEventReader(is, "UTF-8");
+            XMLEventWriter writer = outFactory.createXMLEventWriter(os, "UTF-8");
             
             reader = FilteringReader.builder(reader)
                     .addFilter(QNAME.CONDITIONAL_FORMATTING)
