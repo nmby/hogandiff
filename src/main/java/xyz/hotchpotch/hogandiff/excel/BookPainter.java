@@ -9,6 +9,7 @@ import java.util.Objects;
 import xyz.hotchpotch.hogandiff.ApplicationException;
 import xyz.hotchpotch.hogandiff.Context;
 import xyz.hotchpotch.hogandiff.diff.excel.SResult;
+import xyz.hotchpotch.hogandiff.excel.xssf.XSSFBookPainterWithStaxApi;
 
 /**
  * Excelブックの差分箇所に色を付けるペインターを表します。<br>
@@ -35,6 +36,9 @@ public interface BookPainter {
         Objects.requireNonNull(book, "book");
         Objects.requireNonNull(context, "context");
         
+        if (XSSFBookPainterWithStaxApi.isSupported(book)) {
+            return XSSFBookPainterWithStaxApi.of(context);
+        }
         if (BookPainterWithUserApi.isSupported(book)) {
             return BookPainterWithUserApi.of(context);
         }
