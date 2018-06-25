@@ -317,7 +317,7 @@ public class SheetReader extends AbstractCachingReader {
             
             if (range1 != null && range2 != null) {
                 if (range1.a() < range2.a()) {
-                    copyCol(range1.a(), Math.min(range1.b(), range2.a() - 1));
+                    copyCol(range1.a(), Math.min(range1.b(), range2.a() - 1), false);
                     if (range1.b() < range2.a()) {
                         range1 = null;
                     } else {
@@ -333,7 +333,7 @@ public class SheetReader extends AbstractCachingReader {
                     return;
                     
                 } else {
-                    copyCol(range1.a(), Math.min(range1.b(), range2.b()));
+                    copyCol(range1.a(), Math.min(range1.b(), range2.b()), true);
                     Pair<Integer> prev1 = range1;
                     Pair<Integer> prev2 = range2;
                     
@@ -439,23 +439,18 @@ public class SheetReader extends AbstractCachingReader {
             throw new XMLStreamException();
         }
         
-        private void copyCol(int start, int end) {
+        private void copyCol(int start, int end, boolean redundant) {
             Set<Attribute> attrs = new HashSet<>();
             attrs.add(eventFactory.createAttribute(NONS_QNAME.MIN, Integer.toString(start + 1)));
             attrs.add(eventFactory.createAttribute(NONS_QNAME.MAX, Integer.toString(end + 1)));
-            attrs.add(eventFactory.createAttribute(NONS_QNAME.STYLE, colNewStyle));
+            if (redundant) {
+                attrs.add(eventFactory.createAttribute(NONS_QNAME.STYLE, colNewStyle));
+            }
             
             @SuppressWarnings("unchecked")
             Iterator<Attribute> itr = colStart.getAttributes();
-            while (itr.hasNext()) {
-                Attribute attr = itr.next();
-                QName name = attr.getName();
-                if (!NONS_QNAME.MIN.equals(name)
-                        && !NONS_QNAME.MAX.equals(name)
-                        && !NONS_QNAME.STYLE.equals(name)) {
-                    attrs.add(attr);
-                }
-            }
+            SheetReader.copyAttributes(itr, attrs);
+            
             nexts.add(eventFactory.createStartElement(QNAME.COL, attrs.iterator(), null));
             nexts.addAll(colEvents);
         }
