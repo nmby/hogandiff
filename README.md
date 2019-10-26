@@ -1,3 +1,7 @@
+このリポジトリは更新を放棄しました。
+最新版は hogandiff2 リポジトリをご覧ください。
+---
+
 # hogandiff
 
 hogandiff（方眼Diff）はExcelファイル同士の差分検出ツールです。<br>
